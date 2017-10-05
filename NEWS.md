@@ -1,7 +1,9 @@
+
 ## 5.1.1 Unreleased
 
 * Generates Descriptors at build time from templates in ./descriptors (FOLIO-701)
 * Adds mod- prefix to names of the built artifacts (FOLIO-813)
+* Test release process
 
 ## 5.1.0 2017-08-03
 
