@@ -12,6 +12,11 @@
     },
     "totalRecords": {
       "type": "integer"
+    },
+    "resultInfo": {
+      "type": "object",
+      "$ref": "resultInfo.schema",
+      "readonly": true
     }
   },
   "required": [
