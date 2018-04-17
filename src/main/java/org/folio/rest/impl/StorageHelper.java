@@ -35,12 +35,20 @@ public class StorageHelper {
   }
 
   protected static boolean isDuplicate(String message) {
-    return message != null && message.contains("duplicate key value violates unique constraint");
+    return message != null
+      && message.contains("duplicate key value violates unique constraint");
   }
 
   protected static boolean isInUse(String message) {
-    return message != null && message.contains("is still referenced");
+    return message != null
+      && message.contains("is still referenced");
   }
+
+  protected static boolean isRefError(String message) {
+    return message != null
+      && message.contains("violates foreign key constraint");
+  }
+
 
   protected static CQLWrapper getCQL(String query,
     int limit, int offset, String tableName) throws FieldException {

@@ -157,6 +157,58 @@ public class LocationsTest {
   }
 
   @Test
+  public void cannotCreateLocationWithBadUUID()
+    throws InterruptedException,
+    ExecutionException,
+    TimeoutException,
+    MalformedURLException {
+    UUID id = UUID.randomUUID();
+    CompletableFuture<Response> createLocation = new CompletableFuture<>();
+    JsonObject request = new JsonObject()
+      .put("name", "Main Library with bad UUIDs");
+    putIfNotNull(request, "id", id);
+    putIfNotNull(request, "institutionId", "THIS-IS-NOT-A-UUID");
+    putIfNotNull(request, "campusId", "THIS-IS-NOT-A-UUID");
+    putIfNotNull(request, "libraryId", "THIS-IS-NOT-A-UUID");
+    putIfNotNull(request, "code", "ZZZ");
+    logger.debug("XXX cannotCreateLocationWithBadUUID " + request.encode());
+    send(locationsStorageUrl(""), HttpMethod.POST, request.toString(),
+      SUPPORTED_CONTENT_TYPE_JSON_DEF, ResponseHandler.any(createLocation));
+
+    Response response = createLocation.get(5, TimeUnit.SECONDS);
+    logger.debug("XXX cannotCreateLocationWithBadUUID returned "
+      + response.getStatusCode() + " " + response.getBody());
+
+    assertThat(response.getStatusCode(), is(AdditionalHttpStatusCodes.UNPROCESSABLE_ENTITY));
+  }
+
+  @Test
+  public void cannotCreateLocationWithBadReferences()
+    throws InterruptedException,
+    ExecutionException,
+    TimeoutException,
+    MalformedURLException {
+    UUID id = UUID.randomUUID();
+    CompletableFuture<Response> createLocation = new CompletableFuture<>();
+    JsonObject request = new JsonObject()
+      .put("name", "Main Library with bad UUID references");
+    putIfNotNull(request, "id", id);
+    putIfNotNull(request, "institutionId", UUID.randomUUID().toString());
+    putIfNotNull(request, "campusId", UUID.randomUUID().toString());
+    putIfNotNull(request, "libraryId", UUID.randomUUID().toString());
+    putIfNotNull(request, "code", "ZZZ");
+    logger.debug("XXX cannotCreateLocationWithBadReferences " + request.encode());
+    send(locationsStorageUrl(""), HttpMethod.POST, request.toString(),
+      SUPPORTED_CONTENT_TYPE_JSON_DEF, ResponseHandler.any(createLocation));
+    Response response = createLocation.get(5, TimeUnit.SECONDS);
+    logger.debug("XXX cannotCreateLocationWithBadReferences returned "
+      + response.getStatusCode() + " " + response.getBody());
+
+    assertThat(response.getStatusCode(), is(AdditionalHttpStatusCodes.UNPROCESSABLE_ENTITY));
+  }
+
+  @Test
+
   public void canGetALocationById()
     throws InterruptedException,
     ExecutionException,

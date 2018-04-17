@@ -4,6 +4,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.Json;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.folio.rest.jaxrs.model.Location;
@@ -23,7 +24,9 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.folio.rest.annotations.Validate;
 import static org.folio.rest.impl.StorageHelper.*;
+import org.folio.rest.jaxrs.model.Errors;
 
 /**
  *
@@ -38,11 +41,10 @@ public class LocationAPI implements LocationsResource {
   public static final String ID_FIELD_NAME = "'id'";
 
   @Override
-  public void deleteLocations(          String lang,
-          Map<String, String> okapiHeaders,
-          Handler<AsyncResult<Response>>asyncResultHandler,
-          Context vertxContext)
-  {
+  public void deleteLocations(String lang,
+    Map<String, String> okapiHeaders,
+    Handler<AsyncResult<Response>> asyncResultHandler,
+    Context vertxContext)  {
     String tenantId = TenantTool.tenantId(okapiHeaders);
     PostgresClient.getInstance(vertxContext.owner(), TenantTool.calculateTenantId(tenantId))
       .mutate(String.format("DELETE FROM %s_%s.%s",
@@ -78,7 +80,6 @@ public class LocationAPI implements LocationsResource {
       cql = getCQL(query, limit, offset, LOCATION_TABLE);
     } catch (FieldException e) {
       String message = logAndSaveError(e);
-      logger.warn("XXX - Query exception ", e);
       asyncResultHandler.handle(Future.succeededFuture(
         GetLocationsResponse.withPlainBadRequest(message)));
       return;
@@ -103,6 +104,7 @@ public class LocationAPI implements LocationsResource {
   }
 
   @Override
+  @Validate
   public void postLocations(
     String lang,
     Location entity,
@@ -110,6 +112,7 @@ public class LocationAPI implements LocationsResource {
     Handler<AsyncResult<Response>>asyncResultHandler,
     Context vertxContext) {
 
+    logger.debug("XX postLocations starting " + Json.encode(entity));
     String tenantId = getTenant(okapiHeaders);
     String id = entity.getId();
     if (id == null) {
@@ -120,16 +123,26 @@ public class LocationAPI implements LocationsResource {
       .save(LOCATION_TABLE, id, entity, reply -> {
         if (reply.failed()) {
           String message = logAndSaveError(reply.cause());
-          if (message != null
-            && message.contains("duplicate key value violates unique constraint")) {
+          logger.debug("XX postLocations failure: " + message);
+          if (isDuplicate(message)) {
             asyncResultHandler.handle(Future.succeededFuture(
               PostLocationsResponse.withJsonUnprocessableEntity(
                 ValidationHelper.createValidationErrorMessage(
-                  "shelflocation", entity.getId(),
+                  "id", entity.getId(),
                   "Location already exists"))));
           } else {
+            if (isRefError(message)) {
+              asyncResultHandler.handle(Future.succeededFuture(
+                PostLocationsResponse.withJsonUnprocessableEntity(
+                  ValidationHelper.createValidationErrorMessage(
+                    "inst/camp/lib", "???",
+                    "Reference to unknown record"))));
+              // Should extract the field name and value, but that is too much
+              // magic. Hope RMB will get a helper to handle all that
+            } else {
             asyncResultHandler.handle(Future.succeededFuture(
-              PostLocationsResponse.withPlainInternalServerError(message)));
+                PostLocationsResponse.withPlainInternalServerError(message)));
+            }
           }
         } else {
           Object responseObject = reply.result();
@@ -173,7 +186,8 @@ public class LocationAPI implements LocationsResource {
             asyncResultHandler.handle(Future.succeededFuture(
               GetLocationsByIdResponse.withPlainInternalServerError(message)));
           } else {
-            asyncResultHandler.handle(Future.succeededFuture(GetLocationsByIdResponse.withJsonOK(locationList.get(0))));
+            asyncResultHandler.handle(Future.succeededFuture(
+              GetLocationsByIdResponse.withJsonOK(locationList.get(0))));
           }
         }
       });
