@@ -4,10 +4,13 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.ws.rs.core.Response;
+import org.folio.rest.annotations.Validate;
 import org.folio.rest.jaxrs.model.Loccamp;
 import org.folio.rest.jaxrs.model.Loccamps;
 import org.folio.rest.jaxrs.model.Locinst;
@@ -25,6 +28,7 @@ import org.folio.rest.tools.utils.TenantTool;
 import org.folio.rest.tools.utils.ValidationHelper;
 
 public class LocationUnitAPI implements LocationUnitsResource {
+  private final Logger logger = LoggerFactory.getLogger(LocationUnitAPI.class);
   private final Messages messages = Messages.getInstance();
   public static final String URL_PREFIX = "/location-units";
   public static final String ID_FIELD_NAME = "'id'"; // same for all of them
@@ -99,6 +103,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void postLocationUnitsInstitutions(String lang,
     Locinst entity, Map<String, String> okapiHeaders,
     Handler<AsyncResult<Response>> asyncResultHandler,
@@ -139,6 +144,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void getLocationUnitsInstitutionsById(String id,
     String lang, Map<String, String> okapiHeaders,
     Handler<AsyncResult<Response>> asyncResultHandler,
@@ -175,6 +181,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void deleteLocationUnitsInstitutionsById(String id,
     String lang, Map<String, String> okapiHeaders,
     Handler<AsyncResult<Response>> asyncResultHandler,
@@ -206,6 +213,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void putLocationUnitsInstitutionsById(
     String id,
     String lang, Locinst entity, Map<String, String> okapiHeaders,
@@ -308,6 +316,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void postLocationUnitsCampuses(String lang,
     Loccamp entity, Map<String, String> okapiHeaders,
     Handler<AsyncResult<Response>> asyncResultHandler,
@@ -321,8 +330,9 @@ public class LocationUnitAPI implements LocationUnitsResource {
     }
     PostgresClient.getInstance(vertxContext.owner(), tenantId)
       .save(CAMPUS_TABLE, id, entity, reply -> {
-        if (reply.failed()) {
-          String message = StorageHelper.logAndSaveError(reply.cause());
+      if (reply.failed()) {
+        String message = StorageHelper.logAndSaveError(reply.cause());
+        logger.debug("XXX postLocationUnitsCampuses failure " + message);
           if (StorageHelper.isDuplicate(message)) {
             asyncResultHandler.handle(Future.succeededFuture(
               LocationUnitsResource.PostLocationUnitsCampusesResponse
@@ -331,6 +341,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
                     "loccamp", entity.getId(),
                     "Campus already exists"))));
           } else {
+            logger.debug("XXX postLocationUnitsCampuses returning Internal Error");
             asyncResultHandler.handle(Future.succeededFuture(
               LocationUnitsResource.PostLocationUnitsCampusesResponse
                 .withPlainInternalServerError(message)));
@@ -414,6 +425,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void putLocationUnitsCampusesById(
     String id,
     String lang, Loccamp entity, Map<String, String> okapiHeaders,
@@ -515,6 +527,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void postLocationUnitsLibraries(String lang,
     Loclib entity, Map<String, String> okapiHeaders,
     Handler<AsyncResult<Response>> asyncResultHandler,
@@ -621,6 +634,7 @@ public class LocationUnitAPI implements LocationUnitsResource {
   }
 
   @Override
+  @Validate
   public void putLocationUnitsLibrariesById(
     String id,
     String lang, Loclib entity, Map<String, String> okapiHeaders,

@@ -138,7 +138,7 @@ public class LocationAPI implements LocationsResource {
                     "inst/camp/lib", "???",
                     "Reference to unknown record"))));
               // Should extract the field name and value, but that is too much
-              // magic. Hope RMB will get a helper to handle all that
+              // magic. See RMB-157
             } else {
             asyncResultHandler.handle(Future.succeededFuture(
                 PostLocationsResponse.withPlainInternalServerError(message)));
@@ -156,6 +156,7 @@ public class LocationAPI implements LocationsResource {
   }
 
   @Override
+  @Validate
   public void getLocationsById(
     String id,
     String lang,
@@ -194,6 +195,7 @@ public class LocationAPI implements LocationsResource {
   }
 
   @Override
+  @Validate
   public void deleteLocationsById(
     String id,
     String lang,
@@ -226,6 +228,7 @@ public class LocationAPI implements LocationsResource {
   }
 
   @Override
+  @Validate
   public void putLocationsById(
     String id,
     String lang,

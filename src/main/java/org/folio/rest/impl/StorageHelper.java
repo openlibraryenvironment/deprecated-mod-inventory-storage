@@ -34,6 +34,8 @@ public class StorageHelper {
     return message;
   }
 
+  // Error message analysis. These should not be necessary, once we have
+  // RMB-157 implemented.
   protected static boolean isDuplicate(String message) {
     return message != null
       && message.contains("duplicate key value violates unique constraint");
