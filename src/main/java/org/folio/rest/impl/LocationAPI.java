@@ -230,7 +230,9 @@ public class LocationAPI implements LocationsResource {
 					}
 				});
 			} else {
-				asyncResultHandler.handle(Future.failedFuture("Failed to cascade delete."));
+				pgClient.rollbackTx(connection, rollback -> {
+					asyncResultHandler.handle(Future.failedFuture("Failed to cascade delete."));
+				});
 			}
 
 		});
@@ -249,24 +251,37 @@ public class LocationAPI implements LocationsResource {
 			pgClient.get(SERVICE_POINT_TABLE, Servicepoint.class, new String[] { "*" }, cql, true, false, reply -> {
 
 				@SuppressWarnings("unchecked")
-				List<Servicepoint> sp = (List<Servicepoint>) reply.result().getResults();
+				List<Servicepoint> servicePoints = (List<Servicepoint>) reply.result().getResults();
 
-				sp.forEach(s -> {
-					Criteria where = new Criteria().addField("'id'").setOperation("=").setValue(s.getId());
-					s.getLocationIds().remove(id);
-					pgClient.update(connection, SERVICE_POINT_TABLE, s, "jsonb", where.toString(), false, updateReply -> {
-					});
-				});
+				removeLocationsFromServicepointList(servicePoints, pgClient, connection, id, 0);
 
 			});
+
 		} catch (Exception e) {
-			pgClient.rollbackTx(connection, rollback -> {
-				logAndSaveError(e.getCause());
-			});
+			logAndSaveError(e.getCause());
 			succeded = false;
 		}
 
 		return succeded;
+
+	}
+
+	private void removeLocationsFromServicepointList(List<Servicepoint> servicePoints, PostgresClient pgClient,
+			AsyncResult<Object> connection, String id, int index) {
+
+		if (index >= 0 && index < servicePoints.size()) {
+
+			Servicepoint servicePoint = servicePoints.get(index);
+			Criteria criteria = new Criteria().addField("'id'").setOperation("=").setValue(servicePoint.getId());
+			Criterion criterion = new Criterion(criteria);
+
+			servicePoint.getLocationIds().remove(id);
+
+			pgClient.update(connection, SERVICE_POINT_TABLE, servicePoint, "jsonb", criterion.toString(), false,
+					updateReply -> {
+						removeLocationsFromServicepointList(servicePoints, pgClient, connection, id, index + 1);
+					});
+		}
 
 	}
 
