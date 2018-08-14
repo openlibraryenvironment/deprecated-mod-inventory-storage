@@ -1,3 +1,10 @@
+## 12.5.1 unreleased
+
+* Add following GIN indexes for effective-location queries (MODINVSTOR-138):
+  - `holdings_record.temporaryLocationId`
+  - `item.permanentLocationId`
+  - `item.temporaryLocationId`
+
 ## 12.5.0 2018-08-02
 
 * Add `service-points-users` endpoint (MODINVSTOR-132)
@@ -6,10 +13,6 @@
 ## 12.4.0 2018-07-26
 
 * Item `status` now defaults to 'Available' (MODINVSTOR-137)
-* Add following GIN indexes for effective-location queries (MODINVSTOR-138):
-  - `holdings_record.temporaryLocationId`
-  - `item.permanentLocationId`
-  - `item.temporaryLocationId`
 
 ## 12.3.0 2018-07-24
 
