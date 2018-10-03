@@ -253,8 +253,11 @@
       "readonly": true
     },
     "holdingsRecords2": {
-      "type": "object",
-      "$ref": "holdingsrecord.json",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "holdingsrecord.json"
+      },
       "readonly": true,
       "folio:isVirtual": true,
       "folio:linkBase": "holdings-storage/holdings",
