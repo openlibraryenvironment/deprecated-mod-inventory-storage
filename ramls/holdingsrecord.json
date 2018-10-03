@@ -49,6 +49,16 @@
       "folio:linkToField": "holdingsRecordId",
       "folio:includedElement": "items"
     },
+    "holdingsInstance": {
+      "type": "object",
+      "$ref": "instance.json",
+      "readonly": true,
+      "folio:isVirtual": true,
+      "folio:linkBase": "inventory/instances",
+      "folio:linkFromField": "instanceId",
+      "folio:linkToField": "id",
+      "folio:includedElement": "instances.0"
+    },
     "metadata": {
       "type": "object",
       "$ref": "raml-util/schemas/metadata.schema",
