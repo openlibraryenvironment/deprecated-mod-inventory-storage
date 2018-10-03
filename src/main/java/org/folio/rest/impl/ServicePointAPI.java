@@ -24,8 +24,6 @@ import org.folio.rest.tools.utils.ValidationHelper;
 import org.z3950.zing.cql.cql2pgjson.CQL2PgJSON;
 import org.z3950.zing.cql.cql2pgjson.FieldException;
 
-import com.github.javaparser.utils.Log;
-
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Context;
@@ -359,15 +357,16 @@ public class ServicePointAPI implements ServicePointsResource {
 	}
 
 	private Future<String> checkServicepointLocationRelationship(Servicepoint entity) {
-		Log.info("CHECKING SERVICE POINT RELATIONSHIPS!");
 		
 		Future<String> future = Future.succeededFuture();
 		
 		if (entity != null && !entity.getLocationIds().containsAll(entity.getPrimaryForLocationIds())) {
 			future = Future.failedFuture(
-					"Service Point to Location relationship is in error: Primary relationship not relfected in location relationship.");
+					"At least one primaryFor location ID is not present in location IDs");
 		}
+
 		return future;
+
 	}
 
 	private Future<String> checkServicepointInUse() {
