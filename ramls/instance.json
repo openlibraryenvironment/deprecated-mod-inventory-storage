@@ -71,6 +71,18 @@
           "identifierTypeId": {
             "type": "string",
             "description": "Resource identifier type (e.g. ISBN, ISSN, LCCN, CODEN, Locally defined identifiers)"
+          },
+          "identifierType": {
+            "type": "object",
+            "description": "Dereferenced identifier type",
+            "readonly": true,
+            "folio:$ref": "identifiertype.json",
+            "readonly": true,
+            "folio:isVirtual": true,
+            "folio:linkBase": "identifier-types",
+            "folio:linkFromField": "identifierTypeId",
+            "folio:linkToField": "id",
+            "folio:includedElement": "identifierTypes.0"
           }
         },
         "additionalProperties": false,
