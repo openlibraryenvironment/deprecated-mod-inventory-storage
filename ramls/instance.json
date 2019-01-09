@@ -115,6 +115,18 @@
             "type": "string",
             "description": "Contributor type terms defined by the MARC code list for relators"
           },
+          "contributorNameType": {
+            "type": "object",
+            "description": "Dereferenced contributor-name type",
+            "readonly": true,
+            "folio:$ref": "contributornametype.json",
+            "readonly": true,
+            "folio:isVirtual": true,
+            "folio:linkBase": "contributor-name-types",
+            "folio:linkFromField": "contributorNameTypeId",
+            "folio:linkToField": "id",
+            "folio:includedElement": "contributorNameTypes.0"
+          },
           "primary": {
             "type": "boolean",
             "description": "Whether this is the primary contributor"
