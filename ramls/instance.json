@@ -137,6 +137,18 @@
           "classificationTypeId": {
             "type": "string",
             "description": "List of classification schemas (e.g. LC, Canadian Classification, NLM, National Agricultural Library, UDC, and Dewey)"
+          },
+          "classificationType": {
+            "type": "object",
+            "description": "Dereferenced classification schema",
+            "readonly": true,
+            "folio:$ref": "classificationtype.json",
+            "readonly": true,
+            "folio:isVirtual": true,
+            "folio:linkBase": "classification-types",
+            "folio:linkFromField": "classificationTypeId",
+            "folio:linkToField": "id",
+            "folio:includedElement": "classificationTypes.0"
           }
         },
         "additionalProperties": false,
