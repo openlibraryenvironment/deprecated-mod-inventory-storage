@@ -23,8 +23,28 @@
     "institutionId": {
       "type": "string"
     },
+    "institution": {
+      "type": "object",
+      "folio:$ref": "locinst.json",
+      "readonly": true,
+      "folio:isVirtual": true,
+      "folio:linkBase": "location-units/institutions",
+      "folio:linkFromField": "institutionId",
+      "folio:linkToField": "id",
+      "folio:includedElement": "locinsts.0"
+    },
     "campusId": {
       "type": "string"
+    },
+    "campus": {
+      "type": "object",
+      "folio:$ref": "loccamp.json",
+      "readonly": true,
+      "folio:isVirtual": true,
+      "folio:linkBase": "location-units/campuses",
+      "folio:linkFromField": "campusId",
+      "folio:linkToField": "id",
+      "folio:includedElement": "loccamps.0"
     },
     "libraryId": {
       "type": "string"
