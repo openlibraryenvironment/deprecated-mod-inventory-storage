@@ -76,6 +76,20 @@
         }
       }
     },
+    "servicePoints": {
+      "type": "array",
+      "description": "List of dereferenced service points",
+      "items": {
+        "type": "object",
+        "$ref": "servicepoint.json"
+      },
+      "readonly": true,
+      "folio:isVirtual": true,
+      "folio:linkBase": "service-points",
+      "folio:linkFromField": "servicePointIds",
+      "folio:linkToField": "id",
+      "folio:includedElement": "servicepoints"
+    },
     "metadata": {
       "type": "object",
       "$ref": "raml-util/schemas/metadata.schema",
