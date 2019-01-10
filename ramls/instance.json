@@ -267,6 +267,20 @@
         "type": "string"
       }
     },
+    "instanceFormats": {
+      "type": "array",
+      "description": "List of dereferenced instance formats",
+      "items": {
+        "type": "object",
+        "$ref": "instanceformat.json"
+      },
+      "readonly": true,
+      "folio:isVirtual": true,
+      "folio:linkBase": "instance-formats",
+      "folio:linkFromField": "instanceFormatIds",
+      "folio:linkToField": "id",
+      "folio:includedElement": "instanceFormats"
+    },
     "physicalDescriptions": {
       "type": "array",
       "description": "Physical description of the described resource, including its extent, dimensions, and such other physical details as a description of any accompanying materials and unit type and size",
