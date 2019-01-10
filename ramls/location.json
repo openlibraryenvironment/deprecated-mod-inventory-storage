@@ -49,6 +49,16 @@
     "libraryId": {
       "type": "string"
     },
+    "library": {
+      "type": "object",
+      "folio:$ref": "locinst.json",
+      "readonly": true,
+      "folio:isVirtual": true,
+      "folio:linkBase": "location-units/libraries",
+      "folio:linkFromField": "libraryId",
+      "folio:linkToField": "id",
+      "folio:includedElement": "loclibs.0"
+    },
     "details": {
       "type": "object"
     },
