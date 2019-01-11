@@ -99,6 +99,16 @@
           "itemNoteTypeId": {
             "type": "string"
           },
+          "itemNoteType": {
+            "type": "object",
+            "folio:$ref": "itemnotetype.json",
+            "readonly": true,
+            "folio:isVirtual": true,
+            "folio:linkBase": "item-note-types",
+            "folio:linkFromField": "itemNoteTypeId",
+            "folio:linkToField": "id",
+            "folio:includedElement": "itemNoteTypes.0"
+          },
           "note": {
             "type": "string"
           },
