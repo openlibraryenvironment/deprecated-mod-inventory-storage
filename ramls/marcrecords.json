@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "A collection of marc records",
+  "type": "object",
+  "properties": {
+    "marcrecords": {
+      "description": "List of marc records",
+      "id": "marcrecord",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "marcrecord.json"
+      }
+    },
+    "totalRecords": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "marcrecords",
+    "totalRecords"
+  ]
+}

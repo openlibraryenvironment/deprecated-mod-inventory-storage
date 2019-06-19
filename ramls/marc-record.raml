@@ -1,0 +1,59 @@
+#%RAML 1.0
+title: MARC Records API
+version: v0.1
+protocols: [ HTTP, HTTPS ]
+baseUri: http://localhost
+
+documentation:
+    - title: MARC Records API
+      content: This documents the API calls that can be made to query and manage associated MARC records
+
+types:
+    marcrecord: !include marcrecord.json
+    marcrecords: !include marcrecords.json
+    errors: !include raml-util/schemas/errors.schema
+
+traits:
+  pageable: !include raml-util/traits/pageable.raml
+  searchable: !include raml-util/traits/searchable.raml
+  language: !include raml-util/traits/language.raml
+  validate: !include raml-util/traits/validation.raml
+
+resourceTypes:
+  collection: !include raml-util/rtypes/collection.raml
+  collection-item: !include raml-util/rtypes/item-collection.raml
+
+/marc-records:
+    type:
+        collection:
+            exampleCollection: !include examples/marcrecords.json
+            exampleItem: !include examples/marcrecord.json
+            schemaCollection: marcrecords
+            schemaItem: marcrecord
+    get:
+        is: [
+            searchable: {description: "with valid searchable fields", example: "name=aaa"},
+            pageable
+        ]
+        description: Return a list of marc records
+    post:
+        description: Create a new marc record
+        is: [validate]
+    delete:
+        description: "Delete all marc records"
+        is: [language]
+        responses:
+            204:
+                description: "All marc records deleted"
+            500:
+                description: "Internal server error"
+                body:
+                    text/plain:
+                        example: "Internal server error"
+    /{marcrecordId}:
+        description: Return a single marc record, by ID
+        type:
+            collection-item:
+                exampleItem: !include examples/marcrecord.json
+                schema: marcrecord
+

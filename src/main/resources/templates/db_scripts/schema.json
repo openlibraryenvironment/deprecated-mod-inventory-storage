@@ -845,6 +845,19 @@
         }
       ],
       "customSnippetPath": "itemHrid.sql"
+    },
+    {
+        "tableName": "marc_record",
+        "withMetadata": true,
+        "pkColumnName": "_id",
+        "generateId": false,
+        "withAuditing": false,
+        "index": [
+            {
+                "filedName": "id",
+                "tOps": "ADD"
+            }
+        ]
     }
   ],
   "views": [
