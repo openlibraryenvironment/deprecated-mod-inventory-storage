@@ -34,8 +34,8 @@ import org.z3950.zing.cql.cql2pgjson.FieldException;
 
 public class MarcRecordAPI implements MarcRecords {
 
-  public static final String MARC_RECORD_TABLE = "";
-  public static final String LOCATION_PREFIX = "";
+  public static final String MARC_RECORD_TABLE = "marc_record";
+  public static final String LOCATION_PREFIX = "/marc-records/";
   public static final Logger log = LoggerFactory.getLogger(MarcRecordAPI.class);
   private final Messages messages = Messages.getInstance();
   public static final String ID_FIELD = "'id'";

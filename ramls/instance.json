@@ -313,6 +313,13 @@
       "folio:linkFromField": "id",
       "folio:linkToField": "instanceId",
       "folio:includedElement": "holdingsRecords"
+    },
+    "marcRecordIds": {
+      "type": "array",
+      "description": "List of associated MARC record IDs",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "additionalProperties": false,

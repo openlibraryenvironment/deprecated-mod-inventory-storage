@@ -17,7 +17,7 @@
             }
         ]
     },
-    {
+   {
       "tableName": "loan_type",
       "withMetadata": true,
       "pkColumnName": "_id",
@@ -858,7 +858,7 @@
         }
       ],
       "customSnippetPath": "itemHrid.sql"
-    },
+    }
   ],
   "views": [
     {
