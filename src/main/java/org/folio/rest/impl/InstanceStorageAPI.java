@@ -389,40 +389,40 @@ public class InstanceStorageAPI implements InstanceStorage {
               return;
             }
           }
-
-          postgresClient.save(INSTANCE_TABLE, entity.getId(), entity,
-            reply -> {
+          populateMarcRecords(entity.getSource(), entity.getId(),
+              TenantTool.calculateTenantId(tenantId), vertxContext).setHandler(res -> {
+            if(res.failed()) {
+              asyncResultHandler.handle(
+                io.vertx.core.Future.succeededFuture(
+                  PostInstanceStorageInstancesResponse
+                    .respond500WithTextPlain(res.cause().getMessage())));
+            } else {
               try {
-                if(reply.succeeded()) {
-                  populateMarcRecords(entity.getSource(), entity.getId(), 
-                      TenantTool.calculateTenantId(tenantId), vertxContext).setHandler(res -> {
-                    if(res.failed()) {
-                      asyncResultHandler.handle(
-                      io.vertx.core.Future.succeededFuture(
-                        PostInstanceStorageInstancesResponse
-                          .respond500WithTextPlain(res.cause().getMessage())));
+                postgresClient.save(INSTANCE_TABLE, entity.getId(), entity,
+                  reply -> {
+
+                    if(reply.succeeded())  {
+                           asyncResultHandler.handle(
+                            io.vertx.core.Future.succeededFuture(
+                            PostInstanceStorageInstancesResponse
+                            .respond201WithApplicationJson(entity,PostInstanceStorageInstancesResponse.headersFor201().withLocation(reply.result()))));
                     } else {
-                       asyncResultHandler.handle(
+                      asyncResultHandler.handle(
                         io.vertx.core.Future.succeededFuture(
-                        PostInstanceStorageInstancesResponse
-                        .respond201WithApplicationJson(entity,PostInstanceStorageInstancesResponse.headersFor201().withLocation(reply.result()))));
+                          PostInstanceStorageInstancesResponse
+                            .respond400WithTextPlain(reply.cause().getMessage())));
                     }
-                  });                 
-                }
-                else {
-                  asyncResultHandler.handle(
-                    io.vertx.core.Future.succeededFuture(
-                      PostInstanceStorageInstancesResponse
-                        .respond400WithTextPlain(reply.cause().getMessage())));
-                }
+
+                });
               } catch (Exception e) {
-                log.error(e.getStackTrace());
-                asyncResultHandler.handle(
-                  io.vertx.core.Future.succeededFuture(
-                    PostInstanceStorageInstancesResponse
-                      .respond500WithTextPlain(e.getMessage())));
-              }
-            });
+                 log.error(e.getStackTrace());
+                 asyncResultHandler.handle(
+                   io.vertx.core.Future.succeededFuture(
+                     PostInstanceStorageInstancesResponse
+                       .respond500WithTextPlain(e.getMessage())));
+               }
+            }
+          });
         } catch (Exception e) {
           log.error(e.getStackTrace());
           asyncResultHandler.handle(io.vertx.core.Future.succeededFuture(
@@ -976,7 +976,7 @@ public class InstanceStorageAPI implements InstanceStorage {
   }
   
   private Boolean isMarcJson(JsonObject json) {
-    return Boolean.TRUE;
+    return json.containsKey("leader") && json.containsKey("fields");
   }
   
   private Future<String> addMarcRecord(JsonObject json, String tenantId, 

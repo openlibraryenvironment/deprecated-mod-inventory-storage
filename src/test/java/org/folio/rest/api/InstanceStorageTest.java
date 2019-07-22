@@ -148,6 +148,48 @@ public class InstanceStorageTest extends TestBase {
   }
 
   @Test
+  public void canCreateAnInstanceWithMarcSource()
+    throws MalformedURLException,
+    InterruptedException,
+    ExecutionException,
+    TimeoutException {
+     UUID id = UUID.randomUUID();
+
+    JsonObject instanceToCreate = hitchhikersGuide(id);
+
+    CompletableFuture<Response> createCompleted = new CompletableFuture<>();
+
+    client.post(instancesStorageUrl(""), instanceToCreate, StorageTestSuite.TENANT_ID,
+      ResponseHandler.json(createCompleted));
+
+    Response response = createCompleted.get(5, TimeUnit.SECONDS);
+
+    assertThat(response.getStatusCode(), is(HttpURLConnection.HTTP_CREATED));
+
+    JsonObject instance = response.getJson();
+
+    assertThat(instance.getString("id"), is(id.toString()));
+    assertThat(instance.getString("title"), is("The Hitchhiker's Guide to the Galaxy"));
+
+    JsonArray identifiers = instance.getJsonArray("identifiers");
+    assertThat(identifiers.size(), is(1));
+    assertThat(identifiers, hasItem(identifierMatches("isbn", "9780345391802")));
+
+    Response getResponse = getById(id);
+
+    assertThat(getResponse.getStatusCode(), is(HttpURLConnection.HTTP_OK));
+
+    JsonObject instanceFromGet = getResponse.getJson();
+
+    assertThat(instanceFromGet.getString("title"),
+      is("The Hitchhiker's Guide to the Galaxy"));
+
+    JsonArray identifiersFromGet = instanceFromGet.getJsonArray("identifiers");
+    assertThat(identifiersFromGet.size(), is(1));
+    assertThat(identifiersFromGet, hasItem(identifierMatches("isbn", "9780345391802")));
+  }
+
+  @Test
   public void canCreateAnInstanceWithoutProvidingID()
     throws MalformedURLException,
     InterruptedException,
@@ -1341,6 +1383,65 @@ public class InstanceStorageTest extends TestBase {
 
     return createInstanceRequest(id, "TEST", "Long Way to a Small Angry Planet",
       identifiers, contributors, UUID.randomUUID().toString());
+  }
+
+  private JsonObject hitchhikersGuide(UUID id) {
+    JsonArray identifiers = new JsonArray();
+    identifiers.add(identifier("isbn", "9780345391802"));
+    JsonArray contributors = new JsonArray();
+    contributors.add(contributor("personal name", "Adams, Douglas"));
+
+    String marcRecord = "{" +
+    "  \"id\":\"7b9d85f6-8cea-4c4a-a02b-2535c0641c7a\"," +
+    "  \"leader\":\"00452nam a2200169 ca4500\"," +
+    "  \"fields\":[" +
+    "    {\"001\":\"029857716\"}," +
+    "    {\"003\":\"DE-601\"}," +
+    "    {\"005\":\"20180511131518.0\"}," +
+    "    {\"008\":\"900626m19799999xxk\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\000\\\\0\\\\eng\\\\d\"}," +
+    "    {\"035\":{\"ind1\":\"\\\\\"," +
+    "            \"ind2\":\"\\\\\"," +
+    "            \"subfields\":[{\"a\":\"(DE-599)GBV029857716\"}]}}," +
+    "    {\"040\":{\"ind1\":\"\\\\\"," +
+    "            \"ind2\":\"\\\\\"," +
+    "            \"subfields\":[{\"b\":\"ger\"}," +
+    "                         {\"c\":\"GBVCP\"}]}}," +
+    "    {\"041\":{\"ind1\":\"0\"," +
+    "            \"ind2\":\"\\\\\"," +
+    "            \"subfields\":[{\"a\":\"eng\"}]}}," +
+    "    {\"044\":{\"ind1\":\"\\\\\"," +
+    "            \"ind2\":\"\\\\\"," +
+    "            \"subfields\":[{\"a\":\"xxk\"}," +
+    "                         {\"a\":\"at\"}]}}," +
+    "    {\"100\":{\"ind1\":\"1\"," +
+    "            \"ind2\":\"\\\\\"," +
+    "            \"subfields\":[{\"a\":\"Adams, Douglas\"}]}}," +
+    "    {\"245\":{\"ind1\":\"1\"," +
+    "            \"ind2\":\"4\"," +
+    "            \"subfields\":[{\"a\":\"The Hitch Hiker's guide to the Galaxy\"}," +
+    "                         {\"c\":\"Douglas Adams\"}]}}," +
+    "    {\"246\":{\"ind1\":\"1\"," +
+    "            \"ind2\":\"3\"," +
+    "            \"subfields\":[{\"i\":\"Nebent.\"}," +
+    "                         {\"a\":\"The hitchhiker series\"}]}}," +
+    "    {\"264\":{\"ind1\":\"3\"," +
+    "            \"ind2\":\"1\"," +
+    "            \"subfields\":[{\"a\":\"London [u.a.]\"}," +
+    "                         {\"b\":\"Pan Books\"}," +
+    "                         {\"c\":\"1979-\"}]}}" +
+    "  ]" +
+    "}";
+
+    JsonObject marcJson = new JsonObject(marcRecord);
+    JsonArray marcJsonArray = new JsonArray();
+    marcJsonArray.add(marcJson);
+
+
+    JsonObject instanceRequest = createInstanceRequest(id, "TEST", "The Hitchhiker's Guide to the Galaxy",
+      identifiers, contributors, UUID.randomUUID().toString());
+
+    instanceRequest.put("source", marcJsonArray.encode());
+    return instanceRequest;
   }
 
   private JsonObject identifier(String identifierTypeId, String value) {
