@@ -45,13 +45,17 @@ import org.z3950.zing.cql.cql2pgjson.QueryValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.vertx.core.AsyncResult;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.sql.ResultSet;
+import static org.folio.rest.impl.MarcRecordAPI.MARC_RECORD_TABLE;
+import org.folio.rest.jaxrs.model.Marcrecord;
 
 public class InstanceStorageAPI implements InstanceStorage {
 
@@ -390,10 +394,20 @@ public class InstanceStorageAPI implements InstanceStorage {
             reply -> {
               try {
                 if(reply.succeeded()) {
-                  asyncResultHandler.handle(
-                    io.vertx.core.Future.succeededFuture(
-                      PostInstanceStorageInstancesResponse
+                  populateMarcRecords(entity.getSource(), entity.getId(), 
+                      TenantTool.calculateTenantId(tenantId), vertxContext).setHandler(res -> {
+                    if(res.failed()) {
+                      asyncResultHandler.handle(
+                      io.vertx.core.Future.succeededFuture(
+                        PostInstanceStorageInstancesResponse
+                          .respond500WithTextPlain(res.cause().getMessage())));
+                    } else {
+                       asyncResultHandler.handle(
+                        io.vertx.core.Future.succeededFuture(
+                        PostInstanceStorageInstancesResponse
                         .respond201WithApplicationJson(entity,PostInstanceStorageInstancesResponse.headersFor201().withLocation(reply.result()))));
+                    }
+                  });                 
                 }
                 else {
                   asyncResultHandler.handle(
@@ -915,6 +929,77 @@ public class InstanceStorageAPI implements InstanceStorage {
       return cqlWrapper;
     }
 
+  }
+  
+  private Future<JsonArray> populateMarcRecords(String marcJsonSource, String instanceId,
+      String tenantId, Context vertxContext) {
+    Future<JsonArray> future = Future.future();
+    JsonArray marcRecordArray = null;
+    try {
+      marcRecordArray = new JsonArray(marcJsonSource);
+    } catch(Exception e) {
+      //pass
+    }
+    if(marcRecordArray == null) {
+      future.complete(new JsonArray());
+      return future;
+    }
+    CompositeFuture compositeFuture;
+    List<Future> futureList = new ArrayList<>();
+    for(Object ob : marcRecordArray) {
+      JsonObject json = (JsonObject)ob;
+      if(isMarcJson(json)) {
+        Future<String> addMarcRecordFuture = addMarcRecord(json, tenantId, vertxContext);
+        futureList.add(addMarcRecordFuture);
+      }
+    }
+    if(futureList.isEmpty()) {
+      future.complete(new JsonArray());
+      return future;
+    }
+    compositeFuture = CompositeFuture.all(futureList);
+    compositeFuture.setHandler(res -> {
+      if(res.failed()) {
+        future.fail(res.cause());
+      } else {
+        JsonArray marcRecordIdList = new JsonArray();
+        for(Future<String> fut : futureList)  {
+          String idString = fut.result();
+          if(idString != null && !idString.isEmpty()) {
+            marcRecordIdList.add(idString);
+          }
+        }
+        future.complete(marcRecordIdList);
+      }
+    });
+    return future;
+  }
+  
+  private Boolean isMarcJson(JsonObject json) {
+    return Boolean.TRUE;
+  }
+  
+  private Future<String> addMarcRecord(JsonObject json, String tenantId, 
+      Context vertxContext) {
+    Future<String> future = Future.future();
+    try {
+      PostgresClient pgClient = PostgresClient.getInstance(vertxContext.owner(), tenantId);
+      Marcrecord entity = new Marcrecord();
+      String id = UUID.randomUUID().toString();
+      entity.setId(id);
+      entity.setLeader(json.getString("leader"));
+      entity.setFields(json.getJsonArray("fields").getList());
+      pgClient.save(MARC_RECORD_TABLE, id, entity, saveReply -> {
+        if(saveReply.failed()) {
+          future.fail(saveReply.cause());
+        } else {
+          future.complete(id);
+        }
+      });
+    } catch(Exception e) {
+      future.fail(e);
+    }
+    return future;
   }
 
 }
