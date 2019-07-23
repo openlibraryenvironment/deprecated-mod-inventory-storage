@@ -18,6 +18,7 @@ import org.folio.rest.jaxrs.model.InstanceRelationship;
 import org.folio.rest.jaxrs.model.InstanceRelationships;
 import org.folio.rest.jaxrs.model.Instances;
 import org.folio.rest.jaxrs.model.MarcJson;
+import org.folio.rest.jaxrs.model.Testinstance;
 import org.folio.rest.jaxrs.resource.InstanceStorage;
 import org.folio.rest.persist.PgExceptionUtil;
 import org.folio.rest.persist.PgUtil;
@@ -527,6 +528,48 @@ public class InstanceStorageAPI implements InstanceStorage {
 
     asyncResultHandler.handle(Future.succeededFuture(
       PutInstanceStorageInstancesSourceRecordModsByInstanceIdResponse
+        .respond500WithTextPlain("Not implemented yet.")));
+  }
+
+  @Override
+  public void getInstanceStorageTestinstances(int offset, int limit, String query, String lang, Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
+    asyncResultHandler.handle(Future.succeededFuture(
+      GetInstanceStorageTestinstancesResponse
+        .respond500WithTextPlain("Not implemented yet.")));
+  }
+
+  @Override
+  public void postInstanceStorageTestinstances(String lang, Instance entity, Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
+    asyncResultHandler.handle(Future.succeededFuture(
+      PostInstanceStorageTestinstancesResponse
+        .respond500WithTextPlain("Not implemented yet.")));
+  }
+
+  @Override
+  public void deleteInstanceStorageTestinstances(String lang, Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
+    asyncResultHandler.handle(Future.succeededFuture(
+      DeleteInstanceStorageTestinstancesResponse
+        .respond500WithTextPlain("Not implemented yet.")));
+  }
+
+  @Override
+  public void getInstanceStorageTestinstancesByInstanceId(String instanceId, String lang, Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
+    asyncResultHandler.handle(Future.succeededFuture(
+      GetInstanceStorageTestinstancesByInstanceIdResponse
+        .respond500WithTextPlain("Not implemented yet.")));
+  }
+
+  @Override
+  public void deleteInstanceStorageTestinstancesByInstanceId(String instanceId, String lang, Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
+    asyncResultHandler.handle(Future.succeededFuture(
+      DeleteInstanceStorageTestinstancesByInstanceIdResponse
+        .respond500WithTextPlain("Not implemented yet.")));
+  }
+
+  @Override
+  public void putInstanceStorageTestinstancesByInstanceId(String instanceId, String lang, Testinstance entity, Map<String, String> okapiHeaders, Handler<AsyncResult<Response>> asyncResultHandler, Context vertxContext) {
+    asyncResultHandler.handle(Future.succeededFuture(
+      PutInstanceStorageTestinstancesByInstanceIdResponse
         .respond500WithTextPlain("Not implemented yet.")));
   }
 

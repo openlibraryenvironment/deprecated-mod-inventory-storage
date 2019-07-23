@@ -11,6 +11,7 @@ documentation:
 types:
   instance: !include instance.json
   instances: !include instances.json
+  testinstance: !include testinstance.json
   marcJson: !include marc.json
   instanceRelationship: !include instancerelationship.json
   instanceRelationships: !include instancerelationships.json
@@ -140,3 +141,42 @@ resourceTypes:
                 body:
                   text/plain:
                     example: "Not implemented yet"
+  /testinstances:
+    displayName: Instances
+    type:
+      collection:
+        exampleCollection: !include  examples/instances_get.json
+        schemaCollection: instances
+        schemaItem: instance
+        exampleItem: !include  examples/instance_get.json
+    get:
+      is: [pageable,
+          searchable: {description: "by title (using CQL)",
+                        example: "title=\"*uproot*\""},
+          ]
+    post:
+    delete:
+      is: [language]
+      responses:
+        204:
+          description: "All instances deleted"
+        500:
+          description: "Internal server error, e.g. due to misconfiguration"
+          body:
+            text/plain:
+              example: "Internal server error, contact administrator"
+    /{instanceId}:
+      type:
+        collection-item:
+          exampleItem: !include examples/instance_get.json
+          schema: testinstance
+      get:
+        responses:
+          200:
+            body:
+  #              type: instance
+        description: |
+          Get Instance by InstanceId
+          Instances are stored and accessed by a hash of key properties. The rules which govern
+          how instance hashes are computed are business rules and defined in the service layer.
+          the storage layer only knows how to insert or retrieve instance records by ID.

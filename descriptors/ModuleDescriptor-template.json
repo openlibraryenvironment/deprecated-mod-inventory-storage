@@ -1939,14 +1939,20 @@
     }
   ],
   "metadata": {
-    "containerMemory": "512",
+    "containerMemory": "768",
     "databaseConnection": "true"
   },
   "launchDescriptor": {
-    "dockerImage": "${artifactId}:${version}",
+    "dockerImage": "local/${artifactId}:${version}",
     "dockerArgs": {
-      "HostConfig": { "PortBindings": { "8081/tcp":  [{ "HostPort": "%p" }] } }
+      "HostConfig" : { "PortBindings": { "8081/tcp": [{ "HostPort": "%p" }], "55052/tcp": [{ "HostPort": "55052" }] } }
     },
-    "dockerPull" : false
+    "dockerPull" : false,
+    "env" : [
+      {
+        "name" : "JAVA_OPTIONS",
+        "value" : "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=55052 -Xmx512m -Dloglevel=DEBUG"
+      }
+    ]
   }
 }
