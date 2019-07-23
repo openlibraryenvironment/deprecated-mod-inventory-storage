@@ -514,6 +514,150 @@
       "customSnippetPath": "instanceHrid.sql"
     },
     {
+      "tableName": "testinstance",
+      "fromModuleVersion": "\"mod-inventory-storage-16.0.4-SNAPSHOT",
+      "withMetadata": true,
+      "foreignKeys": [
+        {
+          "fieldName": "instanceStatusId",
+          "targetTable": "instance_status",
+          "tOps": "ADD"
+        },
+        {
+          "fieldName": "modeOfIssuanceId",
+          "targetTable": "mode_of_issuance",
+          "tOps": "ADD"
+        }
+      ],
+      "uniqueIndex": [
+        {
+          "fieldName": "hrid",
+          "tOps": "ADD"
+        }
+      ],
+      "ginIndex": [
+        {
+          "fieldName": "title",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "indexTitle",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "contributors",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "identifiers",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "instanceTypeId",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "instanceStatusId",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": false
+        },
+        {
+          "fieldName": "modeOfIssuanceId",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": false
+        },
+        {
+          "fieldName": "classifications",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "subjects",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        }
+      ],
+      "index": [
+        {
+          "fieldName": "id",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "source",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": false
+        },
+        {
+          "fieldName": "indexTitle",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "title",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "statisticalCodeIds",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": false
+        },
+        {
+          "fieldName": "contributors",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        },
+        {
+          "fieldName": "publication",
+          "tOps": "ADD",
+          "caseSensitive": false,
+          "removeAccents": true
+        }
+      ],
+      "fullTextIndex": [
+        {
+          "fieldName": "title"
+        },
+        {
+          "fieldName": "languages"
+        },
+        {
+          "fieldName": "instanceTypeId"
+        },
+        {
+          "fieldName": "contributors",
+          "arraySubfield" : "name",
+          "arrayModifiers": ["contributorNameTypeId"]
+        },
+        {
+          "fieldName": "identifiers",
+          "arraySubfield" : "value",
+          "arrayModifiers": ["identifierTypeId"]
+        }
+      ]
+    },
+    {
       "tableName": "instance_relationship",
       "withMetadata": true,
       "index": [
