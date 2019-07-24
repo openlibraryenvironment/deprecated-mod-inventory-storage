@@ -538,7 +538,7 @@
     },
     {
       "tableName": "testinstance",
-      "fromModuleVersion": "mod-inventory-storage-16.0.5",
+      "fromModuleVersion": "mod-inventory-storage-16.0.1-SNAPSHOT",
       "withMetadata": true,
       "foreignKeys": [
         {
