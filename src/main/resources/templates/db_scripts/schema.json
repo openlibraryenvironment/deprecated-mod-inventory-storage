@@ -6,6 +6,7 @@
   "tables": [
     {
       "tableName": "loan_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -17,6 +18,7 @@
     },
     {
       "tableName": "material_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -34,6 +36,7 @@
     },
     {
       "tableName": "locinstitution",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -45,6 +48,7 @@
     },
     {
       "tableName": "loccampus",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -63,6 +67,7 @@
     },
     {
       "tableName": "loclibrary",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -81,6 +86,7 @@
     },
     {
       "tableName": "location",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -113,6 +119,7 @@
     },
     {
       "tableName": "service_point",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -128,6 +135,7 @@
     },
     {
       "tableName": "service_point_user",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -146,6 +154,7 @@
     },
     {
       "tableName": "identifier_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -163,6 +172,7 @@
     },
     {
       "tableName": "instance_relationship_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -180,6 +190,7 @@
     },
     {
       "tableName": "contributor_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": false,
       "withAuditing": false,
       "uniqueIndex": [
@@ -201,6 +212,7 @@
     },
     {
       "tableName": "contributor_name_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -218,6 +230,7 @@
     },
     {
       "tableName": "instance_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": false,
       "withAuditing": false,
       "uniqueIndex": [
@@ -239,6 +252,7 @@
     },
     {
       "tableName": "instance_format",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": false,
       "withAuditing": false,
       "uniqueIndex": [
@@ -260,6 +274,7 @@
     },
     {
       "tableName": "nature_of_content_term",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -277,6 +292,7 @@
     },
     {
       "tableName": "classification_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -294,6 +310,7 @@
     },
     {
       "tableName": "electronic_access_relationship",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -305,6 +322,7 @@
     },
     {
       "tableName": "statistical_code_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -316,6 +334,7 @@
     },
     {
       "tableName": "statistical_code",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -334,6 +353,7 @@
     },
     {
       "tableName": "instance_status",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -349,6 +369,7 @@
     },
     {
       "tableName": "mode_of_issuance",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -360,6 +381,7 @@
     },
     {
       "tableName": "alternative_title_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -371,6 +393,7 @@
     },
     {
       "tableName": "instance",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "foreignKeys": [
         {
@@ -659,6 +682,7 @@
     },
     {
       "tableName": "instance_relationship",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "index": [
         {
@@ -700,11 +724,13 @@
     },
     {
       "tableName": "instance_source_marc",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "customSnippetPath": "instanceSourceMarc.sql"
     },
     {
       "tableName": "ill_policy",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -716,6 +742,7 @@
     },
     {
       "tableName": "call_number_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -727,6 +754,7 @@
     },
     {
       "tableName": "holdings_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -738,6 +766,7 @@
     },
     {
       "tableName": "instance_note_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -749,6 +778,7 @@
     },
     {
       "tableName": "holdings_note_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -760,6 +790,7 @@
     },
     {
       "tableName": "item_note_type",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
@@ -771,6 +802,7 @@
     },
     {
       "tableName": "holdings_record",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "foreignKeys": [
         {
@@ -860,6 +892,7 @@
     },
     {
       "tableName": "item",
+      "fromModuleVersion": "mod-inventory-storage-1.0.0",
       "withMetadata": true,
       "foreignKeys": [
         {
