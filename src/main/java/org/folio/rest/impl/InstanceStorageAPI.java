@@ -389,6 +389,7 @@ public class InstanceStorageAPI implements InstanceStorage {
               return;
             }
           }
+          log.info(String.format("Populating Marc records with source '%s'", entity.getSource()));
           populateMarcRecords(entity.getSource(), entity.getId(),
               TenantTool.calculateTenantId(tenantId), vertxContext).setHandler(res -> {
             if(res.failed()) {
@@ -398,9 +399,9 @@ public class InstanceStorageAPI implements InstanceStorage {
                     .respond500WithTextPlain(res.cause().getMessage())));
             } else {
               try {
+                entity.setMarcRecordIds(res.result().getList());
                 postgresClient.save(INSTANCE_TABLE, entity.getId(), entity,
                   reply -> {
-
                     if(reply.succeeded())  {
                            asyncResultHandler.handle(
                             io.vertx.core.Future.succeededFuture(
@@ -935,12 +936,15 @@ public class InstanceStorageAPI implements InstanceStorage {
       String tenantId, Context vertxContext) {
     Future<JsonArray> future = Future.future();
     JsonArray marcRecordArray = null;
+    log.info(String.format("Populating MARC records for instance %s with source string %s",
+        instanceId, marcJsonSource));
     try {
       marcRecordArray = new JsonArray(marcJsonSource);
     } catch(Exception e) {
       //pass
     }
     if(marcRecordArray == null) {
+      log.info(String.format("%s is not a valid JSON Array", marcJsonSource));
       future.complete(new JsonArray());
       return future;
     }
@@ -954,6 +958,7 @@ public class InstanceStorageAPI implements InstanceStorage {
       }
     }
     if(futureList.isEmpty()) {
+      log.info("No futures generated because no valid marc records to generate");
       future.complete(new JsonArray());
       return future;
     }
@@ -981,6 +986,7 @@ public class InstanceStorageAPI implements InstanceStorage {
   
   private Future<String> addMarcRecord(JsonObject json, String tenantId, 
       Context vertxContext) {
+    log.info(String.format("Creating MARC Record for json object %s", json.encode()));
     Future<String> future = Future.future();
     try {
       PostgresClient pgClient = PostgresClient.getInstance(vertxContext.owner(), tenantId);

@@ -194,4 +194,9 @@ public class InterfaceUrls {
           throws MalformedURLException {
     return StorageTestSuite.storageUrl("/location-units/libraries" + subPath);
   }
+
+  public static URL marcRecordStorageUrl(String subPath)
+      throws MalformedURLException {
+    return StorageTestSuite.storageUrl("/marc-records" + subPath);
+  }
 }

@@ -55,6 +55,12 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import static org.folio.rest.support.http.InterfaceUrls.marcRecordStorageUrl;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * @see org.folio.rest.impl.InstanceStorageAPITest
@@ -152,10 +158,15 @@ public class InstanceStorageTest extends TestBase {
     throws MalformedURLException,
     InterruptedException,
     ExecutionException,
-    TimeoutException {
+    TimeoutException,
+    UnsupportedEncodingException {
      UUID id = UUID.randomUUID();
 
     JsonObject instanceToCreate = hitchhikersGuide(id);
+
+    JsonArray initialMarcRecords = new JsonArray(instanceToCreate.getString("source"));
+    assertThat(initialMarcRecords, is(notNullValue()));
+    assertThat(initialMarcRecords.size(), is(1));
 
     CompletableFuture<Response> createCompleted = new CompletableFuture<>();
 
@@ -187,6 +198,23 @@ public class InstanceStorageTest extends TestBase {
     JsonArray identifiersFromGet = instanceFromGet.getJsonArray("identifiers");
     assertThat(identifiersFromGet.size(), is(1));
     assertThat(identifiersFromGet, hasItem(identifierMatches("isbn", "9780345391802")));
+
+    JsonArray marcRecordIds = instanceFromGet.getJsonArray("marcRecordIds");
+    assertThat(marcRecordIds, is(notNullValue()));
+    assertThat(marcRecordIds.size(), is(1));
+
+    String marcRecordQueryUrl = marcRecordStorageUrl("") + "?query=" +
+        URLEncoder.encode("id=" + marcRecordIds.getString(0), "UTF-8");
+
+    CompletableFuture<Response> queryCompleted = new CompletableFuture<>();
+
+    client.get(marcRecordQueryUrl, StorageTestSuite.TENANT_ID, ResponseHandler.json(queryCompleted));
+    Response queryResponse = queryCompleted.get(5, TimeUnit.SECONDS);
+    JsonObject marcRecordsJson = queryResponse.getJson();
+    JsonArray marcRecords = marcRecordsJson.getJsonArray("marcrecords");
+    JsonObject marcRecord = marcRecords.getJsonObject(0);
+    assertThat(marcRecord.getString("id"), is(marcRecordIds.getString(0)));
+
   }
 
   @Test
@@ -1392,7 +1420,6 @@ public class InstanceStorageTest extends TestBase {
     contributors.add(contributor("personal name", "Adams, Douglas"));
 
     String marcRecord = "{" +
-    "  \"id\":\"7b9d85f6-8cea-4c4a-a02b-2535c0641c7a\"," +
     "  \"leader\":\"00452nam a2200169 ca4500\"," +
     "  \"fields\":[" +
     "    {\"001\":\"029857716\"}," +
