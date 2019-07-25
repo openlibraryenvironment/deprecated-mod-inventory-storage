@@ -2,7 +2,18 @@
   "fullText": {
     "defaultDictionary": "simple"
   },
-
+  "scripts": [
+    {
+      "run": "after",
+      "snippet": "instanceSecondTitleUpdate.sql",
+      "fromModuleVersion": "mod-inventory-storage-16.0.1"
+    },
+    {
+      "run": "after",
+      "snippet": "begin; update ${myuniversity}_${mymodule}.instance set jsonb = jsonb_set(jsonb, '{\"secondTitle\"}', concat('\"', jsonb->> 'title', ' Some Additional Data\"')::jsonb ); commit;",
+      "fromModuleVersion": "mod-inventory-storage-16.0.1"
+    }
+  ],
   "tables": [
     {
       "tableName": "loan_type",
@@ -393,7 +404,7 @@
     },
     {
       "tableName": "instance",
-      "fromModuleVersion": "mod-inventory-storage-1.0.0",
+      "fromModuleVersion": "mod-inventory-storage-16.0.1",
       "withMetadata": true,
       "foreignKeys": [
         {
@@ -534,7 +545,7 @@
           "arrayModifiers": ["identifierTypeId"]
         }
       ],
-      "customSnippetPath": "instanceHrid.sql"
+      "customSnippetPath": "instanceSecondTitleUpdate.sql"
     },
     {
       "tableName": "testinstance",
