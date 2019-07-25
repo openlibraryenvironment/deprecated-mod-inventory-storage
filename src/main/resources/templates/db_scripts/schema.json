@@ -5,12 +5,7 @@
   "scripts": [
     {
       "run": "after",
-      "snippet": "instanceSecondTitleUpdate.sql",
-      "fromModuleVersion": "mod-inventory-storage-16.0.1"
-    },
-    {
-      "run": "after",
-      "snippet": "begin; update ${myuniversity}_${mymodule}.instance set jsonb = jsonb_set(jsonb, '{\"secondTitle\"}', concat('\"', jsonb->> 'title', ' Some Additional Data\"')::jsonb ); commit;",
+      "snippet": "begin; update ${myuniversity}_${mymodule}.instance set jsonb = jsonb_set(jsonb, '{\"secondTitle\"}', concat('\"', jsonb->> 'title', ' Some Additional Data\"')::jsonb ); commit;\n",
       "fromModuleVersion": "mod-inventory-storage-16.0.1"
     }
   ],
