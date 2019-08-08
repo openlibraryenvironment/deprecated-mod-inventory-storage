@@ -13,6 +13,7 @@ import static org.folio.rest.support.http.InterfaceUrls.materialTypesStorageUrl;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.net.HttpURLConnection;
@@ -43,7 +44,9 @@ import org.junit.Test;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class HoldingsStorageTest extends TestBase {
+public class HoldingsStorageTest extends TestBaseWithInventoryUtil {
+  private static final String TAG_VALUE = "test-tag";
+  public static final String NEW_TEST_TAG = "new test tag";
   private static UUID mainLibraryLocationId;
   private static UUID annexLibraryLocationId;
 
@@ -100,7 +103,8 @@ public class HoldingsStorageTest extends TestBase {
     JsonObject holding = holdingsClient.create(new HoldingRequestBuilder()
       .withId(holdingId)
       .forInstance(instanceId)
-      .withPermanentLocation(mainLibraryLocationId)).getJson();
+      .withPermanentLocation(mainLibraryLocationId)
+      .withTags(new JsonObject().put("tagList", new JsonArray().add(TAG_VALUE)))).getJson();
 
     assertThat(holding.getString("id"), is(holdingId.toString()));
     assertThat(holding.getString("instanceId"), is(instanceId.toString()));
@@ -115,6 +119,11 @@ public class HoldingsStorageTest extends TestBase {
     assertThat(holdingFromGet.getString("id"), is(holdingId.toString()));
     assertThat(holdingFromGet.getString("instanceId"), is(instanceId.toString()));
     assertThat(holdingFromGet.getString("permanentLocationId"), is(mainLibraryLocationId.toString()));
+
+    List<String> tags = holdingFromGet.getJsonObject("tags").getJsonArray("tagList").getList();
+
+    assertThat(tags.size(), is(1));
+    assertThat(tags, hasItem(TAG_VALUE));
   }
 
   @Test
@@ -131,7 +140,8 @@ public class HoldingsStorageTest extends TestBase {
     IndividualResource holdingResponse = holdingsClient.create(new HoldingRequestBuilder()
       .withId(null)
       .forInstance(instanceId)
-      .withPermanentLocation(mainLibraryLocationId));
+      .withPermanentLocation(mainLibraryLocationId)
+      .withTags(new JsonObject().put("tagList", new JsonArray().add(TAG_VALUE))));
 
     JsonObject holding = holdingResponse.getJson();
 
@@ -150,6 +160,11 @@ public class HoldingsStorageTest extends TestBase {
     assertThat(holdingFromGet.getString("id"), is(holdingId.toString()));
     assertThat(holdingFromGet.getString("instanceId"), is(instanceId.toString()));
     assertThat(holdingFromGet.getString("permanentLocationId"), is(mainLibraryLocationId.toString()));
+
+    List<String> tags = holdingFromGet.getJsonObject("tags").getJsonArray("tagList").getList();
+
+    assertThat(tags.size(), is(1));
+    assertThat(tags, hasItem(TAG_VALUE));
   }
 
   @Test
@@ -199,6 +214,7 @@ public class HoldingsStorageTest extends TestBase {
     holdingsClient.replace(holdingId, new HoldingRequestBuilder()
       .withId(holdingId)
       .forInstance(instanceId)
+      .withTags(new JsonObject().put("tagList", new JsonArray().add(TAG_VALUE)))
       .withPermanentLocation(mainLibraryLocationId));
 
     Response getResponse = holdingsClient.getById(holdingId);
@@ -210,6 +226,11 @@ public class HoldingsStorageTest extends TestBase {
     assertThat(holdingFromGet.getString("id"), is(holdingId.toString()));
     assertThat(holdingFromGet.getString("instanceId"), is(instanceId.toString()));
     assertThat(holdingFromGet.getString("permanentLocationId"), is(mainLibraryLocationId.toString()));
+
+    List<String> tags = holdingFromGet.getJsonObject("tags").getJsonArray("tagList").getList();
+
+    assertThat(tags.size(), is(1));
+    assertThat(tags, hasItem(TAG_VALUE));
   }
 
   @Test
@@ -254,12 +275,14 @@ public class HoldingsStorageTest extends TestBase {
 
     IndividualResource holdingResource = holdingsClient.create(new HoldingRequestBuilder()
       .forInstance(instanceId)
+      .withTags(new JsonObject().put("tagList", new JsonArray().add(TAG_VALUE)))
       .withPermanentLocation(mainLibraryLocationId));
 
     UUID holdingId = holdingResource.getId();
 
     JsonObject replacement = holdingResource.copyJson()
-      .put("permanentLocationId", annexLibraryLocationId.toString());
+      .put("permanentLocationId", annexLibraryLocationId.toString())
+      .put("tags", new JsonObject().put("tagList", new JsonArray().add(NEW_TEST_TAG)));
 
     holdingsClient.replace(holdingId, replacement);
 
@@ -272,6 +295,11 @@ public class HoldingsStorageTest extends TestBase {
     assertThat(holdingFromGet.getString("id"), is(holdingId.toString()));
     assertThat(holdingFromGet.getString("instanceId"), is(instanceId.toString()));
     assertThat(holdingFromGet.getString("permanentLocationId"), is(annexLibraryLocationId.toString()));
+
+    List<String> tags = holdingFromGet.getJsonObject("tags").getJsonArray("tagList").getList();
+
+    assertThat(tags.size(), is(1));
+    assertThat(tags, hasItem(NEW_TEST_TAG));
   }
 
   @Test
@@ -323,7 +351,8 @@ public class HoldingsStorageTest extends TestBase {
 
     UUID thirdHoldingId = holdingsClient.create(new HoldingRequestBuilder()
       .forInstance(thirdInstanceId)
-      .withPermanentLocation(mainLibraryLocationId)).getId();
+      .withPermanentLocation(mainLibraryLocationId)
+      .withTags(new JsonObject().put("tagList", new JsonArray().add(TAG_VALUE)))).getId();
 
     CompletableFuture<Response> getCompleted = new CompletableFuture<>();
 
@@ -510,92 +539,71 @@ public class HoldingsStorageTest extends TestBase {
 
   private JsonObject smallAngryPlanet(UUID id) {
     JsonArray identifiers = new JsonArray();
-    identifiers.add(identifier("isbn", "9781473619777"));
+    identifiers.add(identifier(UUID_ISBN, "9781473619777"));
     JsonArray contributors = new JsonArray();
-    contributors.add(contributor("personal name", "Chambers, Becky"));
+    contributors.add(contributor(UUID_PERSONAL_NAME, "Chambers, Becky"));
+    JsonArray tags = new JsonArray();
+    tags.add("test-tag");
 
     return createInstanceRequest(id, "TEST", "Long Way to a Small Angry Planet",
-      identifiers, contributors, UUID.randomUUID().toString());
-  }
-
-  private JsonObject identifier(String identifierTypeId, String value) {
-    return new JsonObject()
-      .put("identifierTypeId", identifierTypeId)
-      .put("value", value);
-  }
-
-  private JsonObject contributor(String contributorNameTypeId, String name) {
-    return new JsonObject()
-      .put("contributorNameTypeId", contributorNameTypeId)
-      .put("name", name);
-  }
-
-  private JsonObject createInstanceRequest(
-    UUID id,
-    String source,
-    String title,
-    JsonArray identifiers,
-    JsonArray contributors,
-    String instanceTypeId) {
-
-    JsonObject instanceToCreate = new JsonObject();
-
-    if(id != null) {
-      instanceToCreate.put("id",id.toString());
-    }
-
-    instanceToCreate.put("title", title);
-    instanceToCreate.put("source", source);
-    instanceToCreate.put("identifiers", identifiers);
-    instanceToCreate.put("contributors", contributors);
-    instanceToCreate.put("instanceTypeId", instanceTypeId);
-
-    return instanceToCreate;
+      identifiers, contributors, UUID.randomUUID(), tags);
   }
 
   private JsonObject nod(UUID id) {
     JsonArray identifiers = new JsonArray();
-    identifiers.add(identifier("asin", "B01D1PLMDO"));
+    identifiers.add(identifier(UUID_ASIN, "B01D1PLMDO"));
 
     JsonArray contributors = new JsonArray();
-    contributors.add(contributor("personal name", "Barnes, Adrian"));
+    contributors.add(contributor(UUID_PERSONAL_NAME, "Barnes, Adrian"));
+
+    JsonArray tags = new JsonArray();
+    tags.add("test-tag");
     return createInstanceRequest(id, "TEST", "Nod",
-      identifiers, contributors, "resource type id");
+      identifiers, contributors, UUID_TEXT, tags);
   }
 
   private JsonObject uprooted(UUID id) {
     JsonArray identifiers = new JsonArray();
-    identifiers.add(identifier("isbn", "1447294149"));
-    identifiers.add(identifier("isbn", "9781447294146"));
+    identifiers.add(identifier(UUID_ISBN, "1447294149"));
+    identifiers.add(identifier(UUID_ISBN, "9781447294146"));
 
     JsonArray contributors = new JsonArray();
-    contributors.add(contributor("personal name", "Novik, Naomi"));
+    contributors.add(contributor(UUID_PERSONAL_NAME, "Novik, Naomi"));
+
+    JsonArray tags = new JsonArray();
+    tags.add("test-tag");
 
     return createInstanceRequest(id, "TEST", "Uprooted",
-      identifiers, contributors, "resource type id");
+      identifiers, contributors, UUID_TEXT, tags);
   }
 
   private JsonObject temeraire(UUID id) {
 
     JsonArray identifiers = new JsonArray();
-    identifiers.add(identifier("isbn", "0007258712"));
-    identifiers.add(identifier("isbn", "9780007258710"));
+    identifiers.add(identifier(UUID_ISBN, "0007258712"));
+    identifiers.add(identifier(UUID_ISBN, "9780007258710"));
 
     JsonArray contributors = new JsonArray();
-    contributors.add(contributor("personal name", "Novik, Naomi"));
+    contributors.add(contributor(UUID_PERSONAL_NAME, "Novik, Naomi"));
+
+    JsonArray tags = new JsonArray();
+    tags.add("test-tag");
     return createInstanceRequest(id, "TEST", "Temeraire",
-      identifiers, contributors, "resource type id");
+      identifiers, contributors, UUID_TEXT, tags);
   }
 
   private JsonObject interestingTimes(UUID id) {
     JsonArray identifiers = new JsonArray();
-    identifiers.add(identifier("isbn", "0552167541"));
-    identifiers.add(identifier("isbn", "9780552167541"));
+    identifiers.add(identifier(UUID_ISBN, "0552167541"));
+    identifiers.add(identifier(UUID_ISBN, "9780552167541"));
 
     JsonArray contributors = new JsonArray();
-    contributors.add(contributor("personal name", "Pratchett, Terry"));
+    contributors.add(contributor(UUID_PERSONAL_NAME, "Pratchett, Terry"));
+
+    JsonArray tags = new JsonArray();
+    tags.add("test-tag");
     return createInstanceRequest(id, "TEST", "Interesting Times",
-      identifiers, contributors, "resource type id");
+      identifiers, contributors, UUID_TEXT, tags);
   }
 
   private Predicate<JsonObject> filterById(UUID holdingId) {

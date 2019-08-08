@@ -7,8 +7,6 @@
     {
         "tableName": "marc_record",
         "withMetadata": true,
-        "pkColumnName": "_id",
-        "generateId": false,
         "withAuditing": false,
         "index": [
             {
@@ -20,8 +18,6 @@
    {
       "tableName": "loan_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -33,8 +29,6 @@
     {
       "tableName": "material_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -52,8 +46,6 @@
     {
       "tableName": "locinstitution",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -65,8 +57,6 @@
     {
       "tableName": "loccampus",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -85,8 +75,6 @@
     {
       "tableName": "loclibrary",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -105,8 +93,6 @@
     {
       "tableName": "location",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -139,8 +125,6 @@
     {
       "tableName": "service_point",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -156,8 +140,6 @@
     {
       "tableName": "service_point_user",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -176,8 +158,6 @@
     {
       "tableName": "identifier_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -195,8 +175,6 @@
     {
       "tableName": "instance_relationship_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -214,8 +192,6 @@
     {
       "tableName": "contributor_type",
       "withMetadata": false,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -237,8 +213,6 @@
     {
       "tableName": "contributor_name_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -256,8 +230,6 @@
     {
       "tableName": "instance_type",
       "withMetadata": false,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -279,8 +251,6 @@
     {
       "tableName": "instance_format",
       "withMetadata": false,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -300,10 +270,25 @@
       ]
     },
     {
+      "tableName": "nature_of_content_term",
+      "withMetadata": true,
+      "withAuditing": false,
+      "uniqueIndex": [
+        {
+          "fieldName": "name",
+          "tOps": "ADD"
+        }
+      ],
+      "index": [
+        {
+          "fieldName": "id",
+          "tOps": "ADD"
+        }
+      ]
+    },
+    {
       "tableName": "classification_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -321,8 +306,6 @@
     {
       "tableName": "electronic_access_relationship",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -334,8 +317,6 @@
     {
       "tableName": "statistical_code_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -347,8 +328,6 @@
     {
       "tableName": "statistical_code",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -367,8 +346,6 @@
     {
       "tableName": "instance_status",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -384,8 +361,6 @@
     {
       "tableName": "mode_of_issuance",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -397,8 +372,6 @@
     {
       "tableName": "alternative_title_type",
       "withMetadata": true,
-      "pkColumnName": "_id",
-      "generateId": false,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -410,8 +383,6 @@
     {
       "tableName": "instance",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "foreignKeys": [
         {
           "fieldName": "instanceStatusId",
@@ -539,6 +510,16 @@
         },
         {
           "fieldName": "instanceTypeId"
+        },
+        {
+          "fieldName": "contributors",
+          "arraySubfield" : "name",
+          "arrayModifiers": ["contributorNameTypeId"]
+        },
+        {
+          "fieldName": "identifiers",
+          "arraySubfield" : "value",
+          "arrayModifiers": ["identifierTypeId"]
         }
       ],
       "customSnippetPath": "instanceHrid.sql"
@@ -546,8 +527,6 @@
     {
       "tableName": "instance_relationship",
       "withMetadata": true,
-      "generateId": true,
-      "pkColumnName": "_id",
       "index": [
         {
           "fieldName": "id",
@@ -589,15 +568,11 @@
     {
       "tableName": "instance_source_marc",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "customSnippetPath": "instanceSourceMarc.sql"
     },
     {
       "tableName": "ill_policy",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -609,8 +584,6 @@
     {
       "tableName": "call_number_type",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -622,8 +595,17 @@
     {
       "tableName": "holdings_type",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
+      "withAuditing": false,
+      "uniqueIndex": [
+        {
+          "fieldName": "name",
+          "tOps": "ADD"
+        }
+      ]
+    },
+    {
+      "tableName": "instance_note_type",
+      "withMetadata": true,
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -635,8 +617,6 @@
     {
       "tableName": "holdings_note_type",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -648,8 +628,6 @@
     {
       "tableName": "item_note_type",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "withAuditing": false,
       "uniqueIndex": [
         {
@@ -661,12 +639,11 @@
     {
       "tableName": "holdings_record",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "foreignKeys": [
         {
           "fieldName": "instanceId",
           "targetTable": "instance",
+          "tableAlias" : "holdingsRecords",
           "tOps": "ADD"
         },
         {
@@ -752,12 +729,11 @@
     {
       "tableName": "item",
       "withMetadata": true,
-      "generateId": false,
-      "pkColumnName": "_id",
       "foreignKeys": [
         {
           "fieldName": "holdingsRecordId",
           "targetTable": "holdings_record",
+          "targetTableAlias" : "holdingsRecords",
           "tOps": "ADD"
         },
         {
@@ -809,8 +785,8 @@
         {
           "fieldName": "barcode",
           "tOps": "ADD",
-          "caseSensitive": true,
-          "removeAccents": false
+          "caseSensitive": false,
+          "removeAccents": true
         },
         {
           "fieldName": "status.name",
@@ -829,8 +805,8 @@
         {
           "fieldName": "barcode",
           "tOps": "ADD",
-          "caseSensitive": true,
-          "removeAccents": false
+          "caseSensitive": false,
+          "removeAccents": true
         },
         {
           "fieldName": "status.name",
@@ -863,7 +839,6 @@
   "views": [
     {
       "viewName": "items_mt_view",
-      "pkColumnName": "_id",
       "join": [
         {
           "table": {
@@ -880,7 +855,6 @@
     },
     {
       "viewName": "instance_holding_view",
-      "pkColumnName": "_id",
       "join": [
         {
           "table": {
@@ -897,7 +871,6 @@
     },
     {
       "viewName": "instance_holding_item_view",
-      "pkColumnName": "_id",
       "joinType": "LEFT JOIN",
       "join": [
         {

@@ -128,6 +128,18 @@ public class InterfaceUrls {
     return StorageTestSuite.storageUrl("/instance-formats" + subPath);
   }
 
+    public static URL natureOfContentTermsUrl(String subPath)
+          throws MalformedURLException {
+
+    return StorageTestSuite.storageUrl("/nature-of-content-terms" + subPath);
+  }
+
+  public static URL instanceNoteTypesUrl(String subPath)
+          throws MalformedURLException {
+
+    return StorageTestSuite.storageUrl("/instance-note-types" + subPath);
+  }
+
   public static URL instanceStatusesUrl(String subPath)
           throws MalformedURLException {
 
@@ -198,5 +210,10 @@ public class InterfaceUrls {
   public static URL marcRecordStorageUrl(String subPath)
       throws MalformedURLException {
     return StorageTestSuite.storageUrl("/marc-records" + subPath);
+  }
+  
+  public static URL instancesStorageBatchInstancesUrl(String subPath)
+    throws MalformedURLException {
+    return StorageTestSuite.storageUrl("/instance-storage/batch/instances" + subPath);
   }
 }
