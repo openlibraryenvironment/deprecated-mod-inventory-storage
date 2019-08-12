@@ -5,16 +5,14 @@
  */
 package org.folio.rest.impl;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Context;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import javax.ws.rs.core.Response;
+
+import org.folio.cql2pgjson.CQL2PgJSON;
+import org.folio.cql2pgjson.exception.FieldException;
 import org.folio.rest.RestVerticle;
 import org.folio.rest.jaxrs.model.Marcrecord;
 import org.folio.rest.jaxrs.model.Marcrecords;
@@ -28,8 +26,13 @@ import org.folio.rest.persist.cql.CQLWrapper;
 import org.folio.rest.tools.messages.Messages;
 import org.folio.rest.tools.utils.TenantTool;
 import org.folio.rest.tools.utils.ValidationHelper;
-import org.z3950.zing.cql.cql2pgjson.CQL2PgJSON;
-import org.z3950.zing.cql.cql2pgjson.FieldException;
+
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Context;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 
 public class MarcRecordAPI implements MarcRecords {
@@ -216,7 +219,7 @@ try {
       Criteria idCrit = new Criteria()
           .addField(ID_FIELD)
           .setOperation("=")
-          .setValue(marcrecordId);
+          .setVal(marcrecordId);
       pgClient.get(MARC_RECORD_TABLE, Marcrecord.class,
           new Criterion(idCrit), true, false, getReply -> {
         if (getReply.failed()) {
@@ -256,7 +259,7 @@ try {
        Criteria idCrit = new Criteria()
            .addField(ID_FIELD)
            .setOperation("=")
-           .setValue(marcrecordId);
+           .setVal(marcrecordId);
        pgClient.delete(MARC_RECORD_TABLE, new Criterion(idCrit),
            deleteReply -> {
          if(deleteReply.failed()) {
@@ -292,7 +295,7 @@ try {
       Criteria idCrit = new Criteria()
           .addField(ID_FIELD)
           .setOperation("=")
-          .setValue(marcrecordId);
+          .setVal(marcrecordId);
       PostgresClient pgClient = getPGClient(vertxContext, tenantId);
       pgClient.update(MARC_RECORD_TABLE, entity, new Criterion(idCrit),
           false, updateReply -> {

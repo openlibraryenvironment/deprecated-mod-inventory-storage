@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.folio.rest.RestVerticle;
-import org.folio.rest.impl.InstanceStorageAPITest;
 import org.folio.rest.impl.StorageHelperTest;
 import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.support.HttpClient;
@@ -35,7 +34,6 @@ import io.vertx.ext.sql.ResultSet;
 
 @Suite.SuiteClasses({
   InstanceStorageTest.class,
-  InstanceStorageAPITest.class,
   HoldingsStorageTest.class,
   ItemStorageTest.class,
   LoanTypeTest.class,
@@ -185,7 +183,7 @@ public class StorageTestSuite {
     CompletableFuture<ResultSet> selectCompleted = new CompletableFuture<>();
 
     String sql = String.format("SELECT null FROM %s_%s.%s" +
-        " WHERE CAST(_id AS VARCHAR(50)) != jsonb->>'id'",
+        " WHERE CAST(id AS VARCHAR(50)) != jsonb->>'id'",
       tenantId, "mod_inventory_storage", tableName);
 
     dbClient.select(sql, result -> {

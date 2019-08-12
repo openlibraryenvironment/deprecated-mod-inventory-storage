@@ -4,7 +4,7 @@
   "provides": [
     {
       "id": "item-storage",
-      "version": "7.3",
+      "version": "7.5",
       "handlers": [
         {
           "methods": ["GET"],
@@ -35,7 +35,7 @@
     },
     {
       "id": "holdings-storage",
-      "version": "3.0",
+      "version": "3.1",
       "handlers": [
         {
           "methods": ["GET"],
@@ -66,7 +66,7 @@
     },
     {
       "id": "instance-storage",
-      "version": "6.0",
+      "version": "7.1",
       "handlers": [
         {
           "methods": ["GET"],
@@ -128,6 +128,17 @@
           "methods": ["DELETE"],
           "pathPattern": "/instance-storage/instance-relationships/{id}",
           "permissionsRequired": ["inventory-storage.instances.item.delete"]
+        }
+      ]
+    },
+    {
+      "id": "instance-storage-batch",
+      "version": "0.2",
+      "handlers": [
+        {
+          "methods": ["POST"],
+          "pathPattern": "/instance-storage/batch/instances",
+          "permissionsRequired": ["inventory-storage.instances.batch.post"]
         }
       ]
     },
@@ -337,7 +348,7 @@
     },
     {
       "id": "identifier-types",
-      "version": "1.1",
+      "version": "1.2",
       "handlers": [
         {
           "methods": ["GET"],
@@ -471,8 +482,35 @@
       ]
     },
     {
+      "id": "nature-of-content-terms",
+      "version": "1.0",
+      "handlers": [
+        {
+          "methods": ["GET"],
+          "pathPattern": "/nature-of-content-terms",
+          "permissionsRequired": ["inventory-storage.nature-of-content-terms.collection.get"]
+        }, {
+          "methods": ["GET"],
+          "pathPattern": "/nature-of-content-terms/{id}",
+          "permissionsRequired": ["inventory-storage.nature-of-content-terms.item.get"]
+        }, {
+          "methods": ["POST"],
+          "pathPattern": "/nature-of-content-terms",
+          "permissionsRequired": ["inventory-storage.nature-of-content-terms.item.post"]
+        }, {
+          "methods": ["PUT"],
+          "pathPattern": "/nature-of-content-terms/{id}",
+          "permissionsRequired": ["inventory-storage.nature-of-content-terms.item.put"]
+        }, {
+          "methods": ["DELETE"],
+          "pathPattern": "/nature-of-content-terms/{id}",
+          "permissionsRequired": ["inventory-storage.nature-of-content-terms.item.delete"]
+        }
+      ]
+    },
+    {
       "id": "classification-types",
-      "version": "1.1",
+      "version": "1.2",
       "handlers": [
         {
           "methods": ["GET"],
@@ -527,7 +565,7 @@
 
     {
       "id": "modes-of-issuance",
-      "version": "1.0",
+      "version": "1.1",
       "handlers": [
         {
           "methods": ["GET"],
@@ -739,6 +777,33 @@
           "methods": ["DELETE"],
           "pathPattern": "/call-number-types/{id}",
           "permissionsRequired": ["inventory-storage.call-number-types.item.delete"]
+        }
+      ]
+    },
+    {
+      "id": "instance-note-types",
+      "version": "1.0",
+      "handlers": [
+        {
+          "methods": ["GET"],
+          "pathPattern": "/instance-note-types",
+          "permissionsRequired": ["inventory-storage.instance-note-types.collection.get"]
+        }, {
+          "methods": ["GET"],
+          "pathPattern": "/instance-note-types/{id}",
+          "permissionsRequired": ["inventory-storage.instance-note-types.item.get"]
+        }, {
+          "methods": ["POST"],
+          "pathPattern": "/instance-note-types",
+          "permissionsRequired": ["inventory-storage.instance-note-types.item.post"]
+        }, {
+          "methods": ["PUT"],
+          "pathPattern": "/instance-note-types/{id}",
+          "permissionsRequired": ["inventory-storage.instance-note-types.item.put"]
+        }, {
+          "methods": ["DELETE"],
+          "pathPattern": "/instance-note-types/{id}",
+          "permissionsRequired": ["inventory-storage.instance-note-types.item.delete"]
         }
       ]
     },
@@ -956,6 +1021,11 @@
       "permissionName": "inventory-storage.instances.item.delete",
       "displayName": "inventory storage - delete individual instance",
       "description": "delete individual instance from storage"
+    },
+    {
+      "permissionName": "inventory-storage.instances.batch.post",
+      "displayName": "inventory storage - create a number of instances",
+      "description": "create a number of instances in storage"
     },
     {
       "permissionName": "inventory-storage.instances.source-record.delete",
@@ -1353,6 +1423,31 @@
       "description": "delete instance type in storage"
     },
     {
+      "permissionName": "inventory-storage.nature-of-content-terms.collection.get",
+      "displayName": "inventory storage - get content terms collection",
+      "description": "get nature-of-content terms collection from storage"
+    },
+    {
+      "permissionName": "inventory-storage.nature-of-content-terms.item.get",
+      "displayName": "inventory storage - get individual content term",
+      "description": "get individual nature-of-content term from storage"
+    },
+    {
+      "permissionName": "inventory-storage.nature-of-content-terms.item.post",
+      "displayName": "inventory storage - create individual content term",
+      "description": "create individual nature-of-content term in storage"
+    },
+    {
+      "permissionName": "inventory-storage.nature-of-content-terms.item.put",
+      "displayName": "inventory storage - modify content term",
+      "description": "modify nature-of-content term in storage"
+    },
+    {
+      "permissionName": "inventory-storage.nature-of-content-terms.item.delete",
+      "displayName": "inventory storage - delete individual content term",
+      "description": "delete nature-of-content term in storage"
+    },
+    {
       "permissionName": "inventory-storage.classification-types.collection.get",
       "displayName": "inventory storage - get classification types collection",
       "description": "get classification types collection from storage"
@@ -1581,6 +1676,31 @@
       "displayName": "inventory storage - delete individual holdings-type",
       "description": "delete individual holdings-type from storage"
     },
+    {
+      "permissionName": "inventory-storage.instance-note-types.collection.get",
+      "displayName": "inventory storage - get instance-note-type collection",
+      "description": "get instance-note-type collection from storage"
+    },
+    {
+      "permissionName": "inventory-storage.instance-note-types.item.get",
+      "displayName": "inventory storage - get individual instance-note-type",
+      "description": "get individual instance-note-type from storage"
+    },
+    {
+      "permissionName": "inventory-storage.instance-note-types.item.post",
+      "displayName": "inventory storage - create individual instance-note-type",
+      "description": "create individual instance-note-type in storage"
+    },
+    {
+      "permissionName": "inventory-storage.instance-note-types.item.put",
+      "displayName": "inventory storage - modify instance-note-type",
+      "description": "modify instance-note-type in storage"
+    },
+    {
+      "permissionName": "inventory-storage.instance-note-types.item.delete",
+      "displayName": "inventory storage - delete individual instance-note-type",
+      "description": "delete individual instance-note-type from storage"
+    },
 
     {
       "permissionName": "inventory-storage.holdings-note-types.collection.get",
@@ -1686,6 +1806,7 @@
         "inventory-storage.instances.source-record.marc-json.put",
         "inventory-storage.instances.source-record.marc-json.delete",
         "inventory-storage.instances.collection.delete",
+        "inventory-storage.instances.batch.post",
         "inventory-storage.loan-types.collection.get",
         "inventory-storage.loan-types.item.get",
         "inventory-storage.loan-types.item.post",
@@ -1751,6 +1872,11 @@
         "inventory-storage.instance-types.item.post",
         "inventory-storage.instance-types.item.put",
         "inventory-storage.instance-types.item.delete",
+        "inventory-storage.nature-of-content-terms.collection.get",
+        "inventory-storage.nature-of-content-terms.item.get",
+        "inventory-storage.nature-of-content-terms.item.post",
+        "inventory-storage.nature-of-content-terms.item.put",
+        "inventory-storage.nature-of-content-terms.item.delete",
         "inventory-storage.classification-types.collection.get",
         "inventory-storage.classification-types.item.get",
         "inventory-storage.classification-types.item.post",
@@ -1801,6 +1927,11 @@
         "inventory-storage.call-number-types.item.post",
         "inventory-storage.call-number-types.item.put",
         "inventory-storage.call-number-types.item.delete",
+        "inventory-storage.instance-note-types.collection.get",
+        "inventory-storage.instance-note-types.item.get",
+        "inventory-storage.instance-note-types.item.post",
+        "inventory-storage.instance-note-types.item.put",
+        "inventory-storage.instance-note-types.item.delete",
         "inventory-storage.holdings-note-types.collection.get",
         "inventory-storage.holdings-note-types.item.get",
         "inventory-storage.holdings-note-types.item.post",
