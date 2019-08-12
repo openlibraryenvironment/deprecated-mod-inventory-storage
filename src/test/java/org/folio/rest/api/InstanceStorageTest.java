@@ -164,7 +164,7 @@ public class InstanceStorageTest extends TestBase {
 
     JsonObject instanceToCreate = hitchhikersGuide(id);
 
-    JsonArray initialMarcRecords = new JsonArray(instanceToCreate.getString("source"));
+    JsonArray initialMarcRecords = new JsonArray(instanceToCreate.getString("originalSource"));
     assertThat(initialMarcRecords, is(notNullValue()));
     assertThat(initialMarcRecords.size(), is(1));
 
@@ -1467,7 +1467,7 @@ public class InstanceStorageTest extends TestBase {
     JsonObject instanceRequest = createInstanceRequest(id, "TEST", "The Hitchhiker's Guide to the Galaxy",
       identifiers, contributors, UUID.randomUUID().toString());
 
-    instanceRequest.put("source", marcJsonArray.encode());
+    instanceRequest.put("originalSource", marcJsonArray.encode());
     return instanceRequest;
   }
 

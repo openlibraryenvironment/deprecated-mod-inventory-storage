@@ -390,7 +390,7 @@ public class InstanceStorageAPI implements InstanceStorage {
             }
           }
           log.info(String.format("Populating Marc records with source '%s'", entity.getSource()));
-          populateMarcRecords(entity.getSource(), entity.getId(),
+          populateMarcRecords(entity.getOriginalSource(), entity.getId(),
               TenantTool.calculateTenantId(tenantId), vertxContext).setHandler(res -> {
             if(res.failed()) {
               asyncResultHandler.handle(

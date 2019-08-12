@@ -15,6 +15,10 @@
       "type": "string",
       "description": "The metadata source and its format of the underlying record to the instance record. (e.g. FOLIO if it's a record created in Inventory;  MARC if it's a MARC record created in MARCcat or EPKB if it's a record coming from eHoldings)"
     },
+    "originalSource": {
+      "type": "string",
+      "description": "The original metadata source record"
+    },
     "title": {
       "type": "string",
       "description": "The primary title (or label) associated with the resource"
