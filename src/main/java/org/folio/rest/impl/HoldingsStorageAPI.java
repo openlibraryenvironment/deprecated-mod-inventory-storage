@@ -23,6 +23,7 @@ import org.folio.rest.persist.Criteria.Criterion;
 import org.folio.rest.persist.Criteria.Limit;
 import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.cql.CQLWrapper;
+import org.folio.rest.service.HoldingsRecordUpdateService;
 import org.folio.rest.tools.utils.TenantTool;
 
 import io.vertx.core.AsyncResult;
@@ -315,6 +316,9 @@ public class HoldingsStorageAPI implements HoldingsStorage {
         PostgresClient.getInstance(
           vertxContext.owner(), TenantTool.calculateTenantId(tenantId));
 
+      HoldingsRecordUpdateService holdingsRecordUpdateService =
+        new HoldingsRecordUpdateService(postgresClient);
+
       vertxContext.runOnContext(v -> {
         try {
           String[] fieldList = {"*"};
@@ -333,39 +337,28 @@ public class HoldingsStorageAPI implements HoldingsStorage {
 
                 if (holdingsList.size() == 1) {
                   try {
-                    postgresClient.startTx(connection -> {
-                      updateItemEffectiveCallNumbersByHoldings(connection, postgresClient, entity).thenAccept(voidResult -> {
-                        postgresClient.update(connection, HOLDINGS_RECORD_TABLE, entity, null, false,
-                          update -> {
-                            try {
-                              if (update.succeeded()) {
-                                postgresClient.endTx(connection, done -> {
-                                  asyncResultHandler.handle(
-                                    Future.succeededFuture(
-                                      PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
-                                        .respond204()));
-                                });
-                              }
-                              else {
-                                postgresClient.rollbackTx(connection, rollback -> {
-                                  asyncResultHandler.handle(
-                                    Future.succeededFuture(
-                                      PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
-                                        .respond500WithTextPlain(
-                                          update.cause().getMessage())));
-                                });
-                              }
-                            } catch (Exception e) {
-                              postgresClient.rollbackTx(connection, rollback -> {
-                                asyncResultHandler.handle(
-                                  Future.succeededFuture(
-                                    PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
-                                      .respond500WithTextPlain(e.getMessage())));
-                              });
-                            }
-                          });
+                    holdingsRecordUpdateService.updateHoldingsRecordAndItems(entity,
+                      update -> {
+                        try {
+                          if (update.succeeded()) {
+                            asyncResultHandler.handle(
+                              Future.succeededFuture(
+                                PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
+                                  .respond204()));
+                          } else {
+                            asyncResultHandler.handle(
+                              Future.succeededFuture(
+                                PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
+                                  .respond500WithTextPlain(
+                                    update.cause().getMessage())));
+                          }
+                        } catch (Exception e) {
+                          asyncResultHandler.handle(
+                            Future.succeededFuture(
+                              PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
+                                .respond500WithTextPlain(e.getMessage())));
+                        }
                       });
-                    });
                   } catch (Exception e) {
                     asyncResultHandler.handle(Future.succeededFuture(
                       PutHoldingsStorageHoldingsByHoldingsRecordIdResponse
