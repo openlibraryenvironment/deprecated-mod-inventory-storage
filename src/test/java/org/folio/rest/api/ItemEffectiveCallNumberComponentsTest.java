@@ -17,9 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.folio.rest.support.IndividualResource;
 import org.folio.rest.support.Response;
@@ -34,9 +32,9 @@ import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
 public class ItemEffectiveCallNumberComponentsTest extends TestBaseWithInventoryUtil {
-  private static final String HOLDINGS_CALL_NUMBER_TYPE = UUID.randomUUID().toString();
+  private static final String HOLDINGS_CALL_NUMBER_TYPE = "31d796e4-009d-441b-b2da-0e73004f0187";
   private static final String HOLDINGS_CALL_NUMBER_TYPE_SECOND = UUID.randomUUID().toString();
-  private static final String ITEM_LEVEL_CALL_NUMBER_TYPE = UUID.randomUUID().toString();
+  private static final String ITEM_LEVEL_CALL_NUMBER_TYPE = "01e8efe0-6237-4e0c-9926-8abaa174c77e";
   private static final String ITEM_LEVEL_CALL_NUMBER_TYPE_SECOND = UUID.randomUUID().toString();
 
   @BeforeClass
@@ -68,17 +66,46 @@ public class ItemEffectiveCallNumberComponentsTest extends TestBaseWithInventory
     );
   }
 
-  @Test
-  @Parameters(method = "createPropertiesParams")
-  public void canCalculateEffectiveCallNumberPropertyOnCreate(
-    Pair<String, String> holdingsProperties,
-    Pair<String, String> itemProperties, String effectivePropertyName) throws Exception {
+  private static String nullify(String s) {
+    if ("null".equals(s)) {
+      return null;
+    }
+    return s;
+  }
 
-    final String holdingsPropertyName = holdingsProperties.getKey();
-    final String holdingsPropertyValue = holdingsProperties.getValue();
-    final String itemPropertyName = itemProperties.getKey();
-    final String itemPropertyValue = itemProperties.getValue();
-    final String effectiveValue = StringUtils.firstNonBlank(itemPropertyValue, holdingsPropertyValue);
+  @Test
+  @Parameters({
+    "callNumber, hrCallNumber, itemLevelCallNumber, null,         callNumber, hrCallNumber",
+    "callNumber, null,         itemLevelCallNumber, itCallNumber, callNumber, itCallNumber",
+    "callNumber, hrCallNumber, itemLevelCallNumber, itCallNumber, callNumber, itCallNumber",
+    "callNumber, null,         itemLevelCallNumber, null,         callNumber, null",
+
+    "callNumberSuffix, hrCallNumberSuffix, itemLevelCallNumberSuffix, null,               suffix, hrCallNumberSuffix",
+    "callNumberSuffix, null,               itemLevelCallNumberSuffix, itCallNumberSuffix, suffix, itCallNumberSuffix",
+    "callNumberSuffix, hrCallNumberSuffix, itemLevelCallNumberSuffix, itCallNumberSuffix, suffix, itCallNumberSuffix",
+    "callNumberSuffix, null,               itemLevelCallNumberSuffix, null,               suffix, null",
+
+    "callNumberPrefix, hrCallNumberPrefix, itemLevelCallNumberPrefix, null,               prefix, hrCallNumberPrefix",
+    "callNumberPrefix, null,               itemLevelCallNumberPrefix, itCallNumberPrefix, prefix, itCallNumberPrefix",
+    "callNumberPrefix, hrCallNumberPrefix, itemLevelCallNumberPrefix, itCallNumberPrefix, prefix, itCallNumberPrefix",
+    "callNumberPrefix, null,               itemLevelCallNumberPrefix, null,               prefix, null",
+
+    "callNumberTypeId, 31d796e4-009d-441b-b2da-0e73004f0187, itemLevelCallNumberTypeId, null, typeId, 31d796e4-009d-441b-b2da-0e73004f0187",
+    "callNumberTypeId, null, itemLevelCallNumberTypeId, 01e8efe0-6237-4e0c-9926-8abaa174c77e, typeId, 01e8efe0-6237-4e0c-9926-8abaa174c77e",
+    "callNumberTypeId, 31d796e4-009d-441b-b2da-0e73004f0187, itemLevelCallNumberTypeId, 01e8efe0-6237-4e0c-9926-8abaa174c77e, typeId, 01e8efe0-6237-4e0c-9926-8abaa174c77e",
+    "callNumberTypeId, null, itemLevelCallNumberTypeId, null, typeId, null",
+  })
+  public void canCalculateEffectiveCallNumberPropertyOnCreate(
+      final String holdingsPropertyName,
+      final String holdingsPropertyValueString,
+      final String itemPropertyName,
+      final String itemPropertyValueString,
+      final String effectivePropertyName,
+      final String effectiveValueString) throws Exception {
+
+    final String holdingsPropertyValue = nullify(holdingsPropertyValueString);
+    final String itemPropertyValue     = nullify(itemPropertyValueString);
+    final String effectiveValue        = nullify(effectiveValueString);
 
     IndividualResource holdings =
       createHoldingsWithPropertySetAndInstance(holdingsPropertyName, holdingsPropertyValue);
@@ -145,60 +172,6 @@ public class ItemEffectiveCallNumberComponentsTest extends TestBaseWithInventory
     assertNotNull(updatedEffectiveCallNumberComponents);
     assertThat(updatedEffectiveCallNumberComponents.getString(effectivePropertyName),
       is(targetEffectiveValue));
-  }
-
-  @SuppressWarnings("unused")
-  private List<Object[]> createPropertiesParams() {
-    List<Object[]> testCases = new ArrayList<>();
-
-    testCases.addAll(createPropertyTestCase("callNumber", "callNumber"));
-    testCases.addAll(createPropertyTestCase("callNumberSuffix", "suffix"));
-    testCases.addAll(createPropertyTestCase("callNumberPrefix", "prefix"));
-    testCases.addAll(createPropertyTestCase("callNumberTypeId", HOLDINGS_CALL_NUMBER_TYPE,
-      ITEM_LEVEL_CALL_NUMBER_TYPE, "typeId"
-    ));
-
-    return testCases;
-  }
-
-  private List<Object[]> createPropertyTestCase(
-    String holdingsPropertyName, String effectivePropertyName) {
-
-    return createPropertyTestCase(holdingsPropertyName,
-      "hr" + capitalize(holdingsPropertyName),
-      "it" + capitalize(holdingsPropertyName),
-      effectivePropertyName
-    );
-  }
-
-  private List<Object[]> createPropertyTestCase(
-    String holdingsPropertyName, String holdingsPropertyValue,
-    String itemPropertyValue, String effectivePropertyName) {
-
-    final String itemPropertyName = "itemLevel" + capitalize(holdingsPropertyName);
-
-    return Arrays.asList(
-      new Object[]{
-        new ImmutablePair<>(holdingsPropertyName, holdingsPropertyValue),
-        new ImmutablePair<>(itemPropertyName, null),
-        effectivePropertyName
-      },
-      new Object[]{
-        new ImmutablePair<>(holdingsPropertyName, null),
-        new ImmutablePair<>(itemPropertyName, itemPropertyValue),
-        effectivePropertyName
-      },
-      new Object[]{
-        new ImmutablePair<>(holdingsPropertyName, holdingsPropertyValue),
-        new ImmutablePair<>(itemPropertyName, itemPropertyValue),
-        effectivePropertyName
-      },
-      new Object[]{
-        new ImmutablePair<>(holdingsPropertyName, null),
-        new ImmutablePair<>(itemPropertyName, null),
-        effectivePropertyName
-      }
-    );
   }
 
   @SuppressWarnings("unused")
