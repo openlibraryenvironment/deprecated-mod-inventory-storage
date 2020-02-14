@@ -1,3 +1,7 @@
+## 19.0.0-shared-inventory2
+
+ * Adds Item.status.name 'Unknown' to allowed statuses (PR-566)
+
 ## 18.2.0 2019-12-20
 
 * Increase maximum number of digits for human readable IDs (HRID) (MODINVSTOR-410, MODINVSTOR-411, MODINVSTOR-412)
