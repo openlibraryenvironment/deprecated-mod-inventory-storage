@@ -1,15 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "A collection of instance records",
+  "description": "A collection of IDs",
   "type": "object",
   "properties": {
-    "instances": {
-      "description": "List of instance records",
-      "id": "instances",
+    "ids": {
+      "description": "List of IDs",
       "type": "array",
       "items": {
-        "type": "object",
-        "$ref": "instance.json"
+        "type": "string"
       }
     },
     "totalRecords": {
@@ -19,10 +17,10 @@
       "$ref": "raml-util/schemas/resultInfo.schema",
       "readonly": true
     }
-
   },
+  "additionalProperties": false,
   "required": [
-    "instances",
+    "ids",
     "totalRecords"
   ]
 }
