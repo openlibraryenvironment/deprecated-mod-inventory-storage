@@ -1,3 +1,7 @@
+## 19.1.0 2020-03-15
+
+* Based on upstream release 19.1.0 with upstream fixes for typos only
+
 ## 19.1.0 2020-03-14
 
 * Improves performance of `keyword` search (MODINVSTOR-455)
