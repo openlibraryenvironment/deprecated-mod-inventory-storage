@@ -1,42 +1,5 @@
 package org.folio.rest.api;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.Async;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.folio.HttpStatus;
-import org.folio.rest.jaxrs.model.Errors;
-import org.folio.rest.jaxrs.model.InstancesBatchResponse;
-import org.folio.rest.jaxrs.model.MarcJson;
-import org.folio.rest.jaxrs.model.NatureOfContentTerm;
-import org.folio.rest.persist.PgUtil;
-import org.folio.rest.persist.PostgresClient;
-import org.folio.rest.support.*;
-import org.folio.rest.support.builders.HoldingRequestBuilder;
-import org.folio.rest.support.builders.ItemRequestBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Stream;
-
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.folio.rest.api.StorageTestSuite.TENANT_ID;
@@ -56,15 +19,50 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.both;
-import static org.hamcrest.Matchers.either;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.joda.time.Seconds.seconds;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Stream;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.folio.HttpStatus;
+import org.folio.rest.jaxrs.model.Errors;
+import org.folio.rest.jaxrs.model.InstancesBatchResponse;
+import org.folio.rest.jaxrs.model.MarcJson;
+import org.folio.rest.jaxrs.model.NatureOfContentTerm;
+import org.folio.rest.persist.PgUtil;
+import org.folio.rest.persist.PostgresClient;
+import org.folio.rest.support.*;
+import org.folio.rest.support.builders.HoldingRequestBuilder;
+import org.folio.rest.support.builders.ItemRequestBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 
 @RunWith(VertxUnitRunner.class)
 public class InstanceStorageTest extends TestBaseWithInventoryUtil {
@@ -2284,6 +2282,41 @@ public class InstanceStorageTest extends TestBaseWithInventoryUtil {
 
     log.info("Finished cannotCreateACollectionOfInstancesWithHRIDFailure");
   }
+
+  @Test
+  public void cannotCreateInstanceWithDuplicateMatchKey() throws Exception {
+    log.info("Starting cannotCreateInstanceWithDuplicateMatchKey");
+
+    final UUID id = UUID.randomUUID();
+    final JsonObject instanceToCreate = smallAngryPlanet(id);
+    instanceToCreate.put("matchKey", "match_key");
+
+    setInstanceSequence(1);
+
+    createInstance(instanceToCreate);
+
+    final Response createdInstance = getById(id);
+
+    assertThat(createdInstance.getJson().getString("matchKey"), is("match_key"));
+
+    final JsonObject instanceToCreateWithSameMatchKey = nod(UUID.randomUUID());
+    instanceToCreateWithSameMatchKey.put("matchKey", "match_key");
+
+    final CompletableFuture<Response> createCompleted = new CompletableFuture<>();
+
+    client.post(instancesStorageUrl(""), instanceToCreateWithSameMatchKey, TENANT_ID,
+      text(createCompleted));
+
+    final Response response = createCompleted.get(5, SECONDS);
+
+    assertThat(response.getStatusCode(), is(400));
+    assertThat(response.getBody(),
+        is("duplicate key value violates unique constraint \"instance_matchkey_idx_unique\": " +
+          "Key (lower(f_unaccent(jsonb ->> 'matchKey'::text)))=(match_key) already exists."));
+
+    log.info("Finished cannotCreateInstanceWithDuplicateMatchKey");
+  }
+
 
   @Test
   public void canPostSynchronousBatchWithDiscoverySuppressedInstances() throws Exception {
