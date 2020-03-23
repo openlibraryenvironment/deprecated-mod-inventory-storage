@@ -1,3 +1,7 @@
+## 19.2.0-shared-inventory3
+
+* Adds Instance property `matchKey`
+
 ## 19.1.0 2020-03-15
 
 * Based on upstream release 19.1.0 with upstream fixes for typos only
