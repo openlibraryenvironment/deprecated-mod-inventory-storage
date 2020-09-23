@@ -2,6 +2,7 @@ package org.folio.rest.support.builders;
 
 import java.util.UUID;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder {
@@ -16,12 +17,22 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
   private String callNumberSuffix;
   private String callNumberTypeId;
   private final String hrid;
+  private final Boolean discoverySuppress;
+  private JsonArray holdingsStatements;
+  private JsonArray holdingsStatementsForIndexes;
+  private JsonArray holdingsStatementsForSupplements;
+  private final UUID sourceId;
 
   public HoldingRequestBuilder() {
     this(
       null,
       null,
       UUID.randomUUID(),
+      null,
+      null,
+      null,
+      null,
+      null,
       null,
       null,
       null,
@@ -41,7 +52,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
     String callNumberPrefix,
     String callNumberSuffix,
     String callNumberTypeId,
-    String hrid) {
+    String hrid,
+    Boolean discoverySuppress,
+    JsonArray holdingsStatements,
+    JsonArray holdingsStatementsForIndexes,
+    JsonArray holdingsStatementsForSupplements,
+    UUID sourceId) {
 
     this.id = id;
     this.instanceId = instanceId;
@@ -53,6 +69,11 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
     this.callNumberSuffix = callNumberSuffix;
     this.callNumberTypeId = callNumberTypeId;
     this.hrid = hrid;
+    this.discoverySuppress = discoverySuppress;
+    this.holdingsStatements = holdingsStatements;
+    this.holdingsStatementsForIndexes = holdingsStatementsForIndexes;
+    this.holdingsStatementsForSupplements = holdingsStatementsForSupplements;
+    this.sourceId = sourceId;
   }
 
   @Override
@@ -69,6 +90,11 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
     put(request, "callNumberSuffix", callNumberSuffix);
     put(request, "callNumberTypeId", callNumberTypeId);
     put(request, "hrid", hrid);
+    put(request, "discoverySuppress", discoverySuppress);
+    put(request, "holdingsStatements", holdingsStatements);
+    put(request, "holdingsStatementsForIndexes", holdingsStatementsForIndexes);
+    put(request, "holdingsStatementsForSupplements", holdingsStatementsForSupplements);
+    put(request, "sourceId", sourceId);
 
     return request;
   }
@@ -84,7 +110,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);
   }
 
   public HoldingRequestBuilder withTemporaryLocation(UUID temporaryLocationId) {
@@ -98,7 +129,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
 
   public HoldingRequestBuilder forInstance(UUID instanceId) {
@@ -112,7 +148,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);
   }
 
   public HoldingRequestBuilder withId(UUID id) {
@@ -126,7 +167,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);
   }
 
   public HoldingRequestBuilder withTags(JsonObject tags) {
@@ -140,7 +186,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
 
   public HoldingRequestBuilder withCallNumber(String callNumber) {
@@ -154,7 +205,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
 
   public HoldingRequestBuilder withCallNumberPrefix(String callNumberPrefix) {
@@ -168,7 +224,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
 
   public HoldingRequestBuilder withCallNumberSuffix(String callNumberSuffix) {
@@ -182,7 +243,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       callNumberSuffix,
       this.callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
 
   public HoldingRequestBuilder withCallNumberTypeId(String callNumberTypeId) {
@@ -196,7 +262,12 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       callNumberTypeId,
-      this.hrid);
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
 
   public HoldingRequestBuilder withHrid(String hrid) {
@@ -210,6 +281,106 @@ public class HoldingRequestBuilder extends JsonRequestBuilder implements Builder
       this.callNumberPrefix,
       this.callNumberSuffix,
       this.callNumberTypeId,
-      hrid);
+      hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
   }
+
+  public HoldingRequestBuilder withDiscoverySuppress(Boolean discoverySuppress) {
+    return new HoldingRequestBuilder(
+      this.id,
+      this.instanceId,
+      this.permanentLocationId,
+      this.temporaryLocationId,
+      this.tags,
+      this.callNumber,
+      this.callNumberPrefix,
+      this.callNumberSuffix,
+      this.callNumberTypeId,
+      this.hrid,
+      discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);
+  }
+
+  public HoldingRequestBuilder withHoldingsStatements(JsonArray holdingsStatements) {
+    return new HoldingRequestBuilder(
+      this.id,
+      this.instanceId,
+      this.permanentLocationId,
+      this.temporaryLocationId,
+      this.tags,
+      this.callNumber,
+      this.callNumberPrefix,
+      this.callNumberSuffix,
+      this.callNumberTypeId,
+      this.hrid,
+      this.discoverySuppress,
+      holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
+  }
+
+  public HoldingRequestBuilder withHoldingsStatementsForIndexes(JsonArray holdingsStatementsForIndexes) {
+    return new HoldingRequestBuilder(
+      this.id,
+      this.instanceId,
+      this.permanentLocationId,
+      this.temporaryLocationId,
+      this.tags,
+      this.callNumber,
+      this.callNumberPrefix,
+      this.callNumberSuffix,
+      this.callNumberTypeId,
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      holdingsStatementsForIndexes,
+      this.holdingsStatementsForSupplements,
+      this.sourceId);      
+  }
+
+  public HoldingRequestBuilder withHoldingsStatementsForSupplements(JsonArray holdingsStatementsForSupplements) {
+    return new HoldingRequestBuilder(
+      this.id,
+      this.instanceId,
+      this.permanentLocationId,
+      this.temporaryLocationId,
+      this.tags,
+      this.callNumber,
+      this.callNumberPrefix,
+      this.callNumberSuffix,
+      this.callNumberTypeId,
+      this.hrid,
+      this.discoverySuppress,
+      this.holdingsStatements,
+      this.holdingsStatementsForIndexes,
+      holdingsStatementsForSupplements,
+      this.sourceId);
+  }
+  
+  public HoldingRequestBuilder withSource(UUID holdingsRecordsSourceId) {
+	    return new HoldingRequestBuilder(
+	      this.id,
+	      this.instanceId,
+	      this.permanentLocationId,
+	      this.temporaryLocationId,
+	      this.tags,
+	      this.callNumber,
+	      this.callNumberPrefix,
+	      this.callNumberSuffix,
+	      this.callNumberTypeId,
+	      this.hrid,
+	      this.discoverySuppress,
+	      this.holdingsStatements,
+	      this.holdingsStatementsForIndexes,
+	      this.holdingsStatementsForSupplements,
+	      holdingsRecordsSourceId);
+	  }
 }

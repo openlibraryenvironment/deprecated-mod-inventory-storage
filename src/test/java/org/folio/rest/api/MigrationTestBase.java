@@ -1,7 +1,6 @@
 package org.folio.rest.api;
 
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.folio.rest.api.StorageTestSuite.TENANT_ID;
 
 import java.util.UUID;
@@ -10,11 +9,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
 
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
 import org.folio.rest.persist.PostgresClient;
 import org.folio.util.ResourceUtil;
 
-import io.vertx.core.Vertx;
-import io.vertx.ext.sql.UpdateResult;
 
 abstract class MigrationTestBase extends TestBaseWithInventoryUtil {
   static String loadScript(String scriptName) {
@@ -52,9 +51,8 @@ abstract class MigrationTestBase extends TestBaseWithInventoryUtil {
     throws InterruptedException, ExecutionException, TimeoutException {
 
     final CompletableFuture<Void> result = new CompletableFuture<>();
-    final Vertx vertx = StorageTestSuite.getVertx();
 
-    PostgresClient.getInstance(vertx).runSQLFile(allStatements, true, handler -> {
+    getPostgresClient().runSQLFile(allStatements, true, handler -> {
       if (handler.failed()) {
         result.completeExceptionally(handler.cause());
       } else if (!handler.result().isEmpty()) {
@@ -64,16 +62,15 @@ abstract class MigrationTestBase extends TestBaseWithInventoryUtil {
       }
     });
 
-    result.get(5, SECONDS);
+    get(result);
   }
 
-  UpdateResult executeSql(String sql)
+  RowSet<Row> executeSql(String sql)
     throws InterruptedException, ExecutionException, TimeoutException {
 
-    final CompletableFuture<UpdateResult> result = new CompletableFuture<>();
-    final Vertx vertx = StorageTestSuite.getVertx();
+    final CompletableFuture<RowSet<Row>> result = new CompletableFuture<>();
 
-    PostgresClient.getInstance(vertx).execute(sql, updateResult -> {
+    getPostgresClient().execute(sql, updateResult -> {
       if (updateResult.failed()) {
         result.completeExceptionally(updateResult.cause());
       } else {
@@ -81,7 +78,7 @@ abstract class MigrationTestBase extends TestBaseWithInventoryUtil {
       }
     });
 
-    return result.get(5, SECONDS);
+    return get(result);
   }
 
   void updateJsonbProperty(
@@ -98,11 +95,31 @@ abstract class MigrationTestBase extends TestBaseWithInventoryUtil {
     ));
   }
 
-  UpdateResult unsetJsonbProperty(String tableName, UUID id, String propertyName)
+  RowSet<Row> unsetJsonbProperty(String tableName, UUID id, String propertyName)
     throws InterruptedException, ExecutionException, TimeoutException {
 
     return executeSql(String.format(
       "UPDATE %s.%s as tbl SET jsonb = tbl.jsonb - '%s' WHERE id::text = '%s'",
       getSchemaName(), tableName, propertyName, id.toString()));
+  }
+
+  RowSet<Row> executeSelect(String selectQuery, Object... args)
+    throws InterruptedException, ExecutionException, TimeoutException {
+
+    final CompletableFuture<RowSet<Row>> result = new CompletableFuture<>();
+    getPostgresClient().select(String.format(replaceSchema(selectQuery), args),
+      resultSet -> {
+        if (resultSet.failed()) {
+          result.completeExceptionally(resultSet.cause());
+          return;
+        }
+        result.complete(resultSet.result());
+      });
+
+    return get(result);
+  }
+
+  private PostgresClient getPostgresClient() {
+    return PostgresClient.getInstance(StorageTestSuite.getVertx());
   }
 }
