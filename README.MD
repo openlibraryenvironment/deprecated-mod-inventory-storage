@@ -1,4 +1,4 @@
-# mod-inventory-storage
+# deprecated: The features implemented here to support a shared inventory have been merged into upstream folio-org/mod-inventory-storage
 
 Copyright (C) 2016-2019 The Open Library Foundation
 
